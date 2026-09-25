@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
     "postinstall": "prisma skills sync || exit 0",
     "dev": "nodemon src/server.ts",
     "build": "tsc",
@@ -17,21 +17,27 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "@prisma/orm-postgres": "^8.0.0-rc.12",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^18.0.3",
     "express": "^5.2.1",
     "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.12.1",
     "socket.io": "^4.8.3",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@prisma/cli-engine": "^0.6.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^26.6.2",
     "@types/pg": "^8.23.1",
+    "@types/supertest": "^7.2.1",
     "@typescript-eslint/eslint-plugin": "^8.70.1",
     "@typescript-eslint/parser": "^8.70.1",
     "eslint": "^10.11.0",
@@ -40,8 +46,10 @@
     "pg": "^8.23.0",
     "prettier": "^3.9.9",
     "prisma": "^5.22.0",
+    "supertest": "^7.3.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.15",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
   }
 }

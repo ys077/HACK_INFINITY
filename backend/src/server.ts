@@ -8,8 +8,16 @@ import { Server } from 'socket.io';
 
 // Load environment variables
 dotenv.config();
-
-import healthRoutes from './routes/health';
+import healthRoutes from './routes/health.js';
+import authRoutes from './routes/auth.routes.js';
+import adminStudentRoutes from './routes/admin.student.routes.js';
+import adminFacultyRoutes from './routes/admin.faculty.routes.js';
+import adminAcademicRoutes from './routes/admin.academic.routes.js';
+import adminClassRoutes from './routes/admin.class.routes.js';
+import studentRoutes from './routes/student.routes.js';
+import studentClassRoutes from './routes/student.class.routes.js';
+import facultyRoutes from './routes/faculty.routes.js';
+import facultyClassRoutes from './routes/faculty.class.routes.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -34,6 +42,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/admin/students', adminStudentRoutes);
+app.use('/api/admin/faculty', adminFacultyRoutes);
+app.use('/api/admin', adminAcademicRoutes);
+app.use('/api/admin/classes', adminClassRoutes);
+app.use('/api/student', studentRoutes);
+app.use('/api/student/classes', studentClassRoutes);
+app.use('/api/faculty', facultyRoutes);
+app.use('/api/faculty/classes', facultyClassRoutes);
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
@@ -52,6 +69,10 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+export { app, server };
+
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}

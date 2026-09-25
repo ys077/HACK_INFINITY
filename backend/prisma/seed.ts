@@ -1,8 +1,13 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
+  const defaultPassword = 'password123'
+  const salt = await bcrypt.genSalt(10)
+  const passwordHash = await bcrypt.hash(defaultPassword, salt)
+
   // Clear the database first to ensure fresh seed
   await prisma.auditLog.deleteMany()
   await prisma.attendanceConflict.deleteMany()
@@ -11,11 +16,11 @@ async function main() {
   await prisma.attendanceSession.deleteMany()
   await prisma.studentDevice.deleteMany()
   await prisma.enrollment.deleteMany()
+  await prisma.student.deleteMany()
   await prisma.class.deleteMany()
   await prisma.classroom.deleteMany()
   await prisma.subject.deleteMany()
   await prisma.section.deleteMany()
-  await prisma.student.deleteMany()
   await prisma.course.deleteMany()
   await prisma.faculty.deleteMany()
   await prisma.admin.deleteMany()
@@ -26,7 +31,7 @@ async function main() {
   const adminUser = await prisma.user.create({
     data: {
       email: 'admin@presenza.edu',
-      passwordHash: 'hashed_password_placeholder', // Dummy hash
+      passwordHash, // Dummy hash
       role: 'ADMIN',
       admin: {
         create: {
@@ -49,7 +54,7 @@ async function main() {
   const faculty1 = await prisma.user.create({
     data: {
       email: 'john.smith@presenza.edu',
-      passwordHash: 'hashed_password_placeholder',
+      passwordHash,
       role: 'FACULTY',
       faculty: {
         create: {
@@ -65,7 +70,7 @@ async function main() {
   const faculty2 = await prisma.user.create({
     data: {
       email: 'jane.doe@presenza.edu',
-      passwordHash: 'hashed_password_placeholder',
+      passwordHash,
       role: 'FACULTY',
       faculty: {
         create: {
@@ -142,7 +147,7 @@ async function main() {
     const studentUser = await prisma.user.create({
       data: {
         email: `student${i}@presenza.edu`,
-        passwordHash: 'hashed_password_placeholder',
+        passwordHash,
         role: 'STUDENT',
         student: {
           create: {
