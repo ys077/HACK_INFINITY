@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, LogOut, Users, UserCheck } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users, UserCheck, BarChart3, Settings } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 const AdminLayout = () => {
@@ -17,6 +17,8 @@ const AdminLayout = () => {
     { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Students', path: '/admin/students', icon: Users },
     { label: 'Faculty', path: '/admin/faculty', icon: UserCheck },
+    { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
+    { label: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 
   return (

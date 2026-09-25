@@ -41,7 +41,7 @@ const FacultyStudents = () => {
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Enrolled Students</h1>
-          {cls && <p className="text-gray-500 mt-1">{cls.subject?.name} • {cls.course} ({cls.section})</p>}
+          {cls && <p className="text-gray-500 mt-1">{cls.section?.course?.name} ({cls.section?.name})</p>}
         </div>
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

@@ -24,7 +24,7 @@ export const AdminSessions = () => {
   }, []);
 
   const filtered = sessions.filter(s => 
-    s.class.subject.name.toLowerCase().includes(search.toLowerCase()) || 
+    s.class.section?.course?.name?.toLowerCase().includes(search.toLowerCase()) || 
     s.faculty.user.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -54,8 +54,8 @@ export const AdminSessions = () => {
           <div key={session.id} className="bg-white rounded-xl border shadow-sm p-6 flex flex-col">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="font-bold text-lg text-gray-900">{session.class.subject.name}</h3>
-                <p className="text-sm text-gray-500">{session.class.subject.code} • {session.class.section.name}</p>
+                <h3 className="font-bold text-lg text-gray-900">{session.class.section?.course?.name}</h3>
+                <p className="text-sm text-gray-500">{session.class.section?.course?.code} • {session.class.section.name}</p>
               </div>
               <span className={cn(
                 "px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wide",

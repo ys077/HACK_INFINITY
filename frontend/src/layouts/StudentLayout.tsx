@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LayoutDashboard, LogOut, BookOpen, Radio, Clock, User, Bluetooth } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 const StudentLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -13,124 +14,76 @@ const StudentLayout = () => {
   };
 
   const navItems = [
-    { name: 'Home', path: '/student/dashboard', icon: 'grid_view' },
-    { name: 'My Classes', path: '/student/classes', icon: 'menu_book' },
-    { name: 'Live Sessions', path: '/student/sessions', icon: 'podcasts' },
-    { name: 'History', path: '/student/attendance', icon: 'history' },
-    { name: 'Profile', path: '/student/profile', icon: 'person' },
-    { name: 'BLE Test (POC)', path: '/student/bluetooth-test', icon: 'bluetooth' },
+    { label: 'Home', path: '/student/dashboard', icon: LayoutDashboard },
+    { label: 'Live Sessions', path: '/student/sessions', icon: Radio },
+    { label: 'History', path: '/student/attendance', icon: Clock },
+    { label: 'Profile', path: '/student/profile', icon: User },
+    { label: 'BLE Test (POC)', path: '/student/bluetooth-test', icon: Bluetooth },
   ];
 
   return (
-    <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
-      {/* Sidebar Desktop */}
-      <aside className="fixed left-0 top-0 h-full w-[250px] bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between select-none">
-        <div className="flex flex-col">
-          <div className="h-16 px-space-md flex items-center gap-space-sm bg-surface-container-lowest">
-            <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center text-white font-bold text-lg">P</div>
-            <div className="flex flex-col min-w-0">
-              <span className="font-title-md text-title-md tracking-tight text-on-surface leading-none">PRESENZA</span>
-              <span className="font-label-sm text-label-sm text-on-surface-variant truncate mt-0.5">Classroom Presence</span>
-            </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+      {/* Sidebar / Topbar */}
+      <aside className="w-full md:w-64 bg-white border-r border-gray-200 shrink-0 flex flex-col">
+        <div className="p-4 border-b border-gray-100 flex items-center gap-2">
+          <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+            <LayoutDashboard className="w-5 h-5 text-white" />
           </div>
-          <div className="mx-space-md mt-space-sm mb-space-sm p-space-sm bg-surface-container-low rounded-lg">
-            <div className="flex items-center justify-between">
-              <span className="font-label-sm text-label-sm text-tertiary">Student View</span>
-              <button className="text-primary hover:text-on-primary-fixed-variant flex items-center transition-colors" type="button">
-                <span className="material-symbols-outlined text-[14px]">swap_horiz</span>
-              </button>
-            </div>
-            <div className="font-label-md text-label-md text-on-surface truncate mt-1">{user?.name}</div>
-            <div className="font-label-sm text-label-sm text-on-surface-variant font-mono">{user?.employeeId || user?.studentId || 'N/A'}</div>
+          <div>
+            <h2 className="font-bold text-gray-900 tracking-tight leading-none">Presenza</h2>
+            <span className="text-xs font-medium text-purple-600 tracking-wider uppercase">Student</span>
           </div>
-          <nav className="px-space-sm space-y-space-xs">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) => cn(
-                  "flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors font-title-md",
-                  isActive 
-                    ? "bg-surface-container text-primary font-title-md" 
-                    : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
-                )}
-              >
-                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-                <span className="font-body-md text-body-md">{item.name}</span>
-              </NavLink>
-            ))}
+        </div>
+        
+        <div className="p-4 flex-1">
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname.startsWith(item.path);
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive 
+                      ? "bg-purple-50 text-purple-700" 
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  )}
+                >
+                  <Icon className={cn("w-5 h-5", isActive ? "text-purple-700" : "text-gray-400")} />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
-        <div className="p-space-sm flex flex-col gap-space-sm">
-          <div className="px-space-sm py-space-xs flex items-center justify-between bg-surface-container-low rounded-lg">
-            <div className="flex items-center gap-space-xs">
-              <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="font-label-sm text-label-sm text-tertiary">Nodes Operational</span>
+
+        <div className="p-4 border-t border-gray-100">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold">
+              {user?.name?.charAt(0) || 'S'}
             </div>
-            <span className="material-symbols-outlined text-[14px] text-tertiary">wifi_tethering</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+            </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-space-sm px-space-md py-space-xs text-error hover:text-error-container transition-colors w-full">
-            <span className="material-symbols-outlined text-[18px]">logout</span>
-            <span className="font-label-md text-label-md">Sign Out</span>
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
           </button>
-          <div className="flex items-center gap-space-sm p-space-sm bg-surface-container-low rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary text-[18px]">person</span>
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="font-label-md text-label-md text-on-surface truncate">{user?.name?.split(' ')[0]}</span>
-              <span className="font-label-sm text-label-sm text-on-surface-variant truncate capitalize">{user?.role?.toLowerCase()}</span>
-            </div>
-          </div>
         </div>
       </aside>
 
-      <div className="pl-[250px] min-h-screen flex flex-col bg-surface">
-        <header className="fixed top-0 left-[250px] right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-gutter flex items-center justify-between gap-space-md">
-          <div className="flex items-center gap-space-md flex-1 max-w-lg">
-            <div className="relative w-full">
-              <span className="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-tertiary text-[18px]">search</span>
-              <input className="w-full pl-10 pr-space-md py-1.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder-tertiary focus:outline-none focus:bg-surface-container-lowest transition-colors" placeholder="Search courses, sessions, faculty, or rooms (⌘K)..." type="text"/>
-            </div>
-          </div>
-          <div className="flex items-center gap-space-md">
-            <div className="hidden sm:flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-high">
-              <span className="h-2 w-2 rounded-full bg-primary-container animate-ping"></span>
-              <span className="font-label-sm text-label-sm text-on-secondary-container font-semibold">Presence Active</span>
-            </div>
-            <button aria-label="Notifications" className="relative p-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
-              <span className="material-symbols-outlined text-[22px]">notifications</span>
-              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-error"></span>
-            </button>
-            <button aria-label="Help" className="p-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
-              <span className="material-symbols-outlined text-[22px]">help_outline</span>
-            </button>
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer">
-              <span className="material-symbols-outlined text-on-primary text-[18px]">person</span>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 pt-16 w-full px-gutter py-space-lg bg-surface">
-          <Outlet />
-        </main>
-
-        <footer className="w-full bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] py-space-md px-gutter mt-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-md text-label-md text-on-surface-variant">
-            <p>© 2026 PRESENZA. Continuous Classroom Presence Platform.</p>
-            <div className="flex items-center gap-space-md">
-              <a className="hover:text-on-surface transition-colors" href="#">Attendance Policy</a>
-              <span>•</span>
-              <a className="hover:text-on-surface transition-colors" href="#">Student Privacy</a>
-              <span>•</span>
-              <a className="hover:text-on-surface transition-colors" href="#">Support Desk</a>
-            </div>
-          </div>
-        </footer>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto p-4 md:p-8">
+        <Outlet />
+      </main>
     </div>
   );
 };
-
 export default StudentLayout;
-

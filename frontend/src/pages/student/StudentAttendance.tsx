@@ -6,7 +6,7 @@ import { cn } from '../../utils/cn';
 
 const StudentAttendance = () => {
   const [summary, setSummary] = useState<any>(null);
-  const [subjects, setSubjects] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [trends, setTrends] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,15 +15,15 @@ const StudentAttendance = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [sumRes, subjRes, trendRes, histRes] = await Promise.all([
+        const [sumRes, coursesRes, trendRes, histRes] = await Promise.all([
           api.get('/student/analytics/summary'),
-          api.get('/student/analytics/subjects'),
+          api.get('/student/analytics/courses'),
           api.get('/student/analytics/trends'),
           api.get('/student/attendance/history')
         ]);
         
         setSummary(sumRes.data.data);
-        setSubjects(subjRes.data.data.subjects);
+        setCourses(coursesRes.data.data.courses || []);
         setTrends(trendRes.data.data.points);
         setHistory(histRes.data.data.sessions || []);
       } catch (err: any) {
@@ -51,7 +51,7 @@ const StudentAttendance = () => {
     <div className="space-y-8 max-w-5xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Attendance Overview</h1>
-        <p className="text-gray-500 mt-1">Review your overall attendance, subject breakdowns, and session history.</p>
+        <p className="text-gray-500 mt-1">Review your overall attendance, course breakdowns, and session history.</p>
       </div>
 
       {/* Summary Section */}
@@ -104,38 +104,38 @@ const StudentAttendance = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column: Subjects and Trends */}
+        {/* Left Column: Courses and Trends */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Subject Breakdown */}
+          {/* Course Breakdown */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-               <h2 className="text-lg font-semibold text-gray-900">Subject Attendance</h2>
+               <h2 className="text-lg font-semibold text-gray-900">Course Attendance</h2>
                <BookOpen className="w-5 h-5 text-gray-400" />
              </div>
              <div className="divide-y divide-gray-100">
-               {subjects.length === 0 ? (
-                 <div className="p-8 text-center text-gray-500">No subject data available.</div>
+               {courses.length === 0 ? (
+                 <div className="p-8 text-center text-gray-500">No course data available.</div>
                ) : (
-                 subjects.map((sub: any) => (
-                   <div key={sub.subjectId} className="p-6">
+                 courses.map((c: any) => (
+                   <div key={c.courseId} className="p-6">
                      <div className="flex justify-between items-end mb-2">
                        <div>
-                         <h3 className="font-bold text-gray-900">{sub.subjectName}</h3>
-                         <div className="text-sm text-gray-500">{sub.subjectCode} • {sub.totalSessions} sessions</div>
+                         <h3 className="font-bold text-gray-900">{c.courseName}</h3>
+                         <div className="text-sm text-gray-500">{c.courseCode} • {c.totalSessions} sessions</div>
                        </div>
                        <div className={cn("text-lg font-bold", 
-                          sub.attendancePercentage >= 75 ? "text-green-600" :
-                          sub.attendancePercentage >= 50 ? "text-orange-600" : "text-red-600"
+                          c.attendancePercentage >= 75 ? "text-green-600" :
+                          c.attendancePercentage >= 50 ? "text-orange-600" : "text-red-600"
                        )}>
-                         {sub.attendancePercentage}%
+                         {c.attendancePercentage}%
                        </div>
                      </div>
                      <div className="w-full bg-gray-100 rounded-full h-2.5 mt-3">
                        <div className={cn("h-2.5 rounded-full transition-all", 
-                          sub.attendancePercentage >= 75 ? "bg-green-500" :
-                          sub.attendancePercentage >= 50 ? "bg-orange-500" : "bg-red-500"
-                       )} style={{ width: `${sub.attendancePercentage}%` }}></div>
+                          c.attendancePercentage >= 75 ? "bg-green-500" :
+                          c.attendancePercentage >= 50 ? "bg-orange-500" : "bg-red-500"
+                       )} style={{ width: `${c.attendancePercentage}%` }}></div>
                      </div>
                    </div>
                  ))
@@ -194,7 +194,7 @@ const StudentAttendance = () => {
                 history.map((record: any) => (
                   <Link key={record.sessionId} to={`/student/attendance/${record.sessionId}`} className="block p-5 hover:bg-gray-50 transition-colors">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-gray-900 text-sm truncate pr-2">{record.subject}</h3>
+                      <h3 className="font-bold text-gray-900 text-sm truncate pr-2">{record.courseName || record.subject}</h3>
                       <div className="mt-0.5 shrink-0">
                         {record.status === 'PRESENT' ? (
                           <CheckCircle className="w-4 h-4 text-green-500" />

@@ -7,6 +7,9 @@ export const AdminStudents = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [selectedDept, setSelectedDept] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedSection, setSelectedSection] = useState('');
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [departments, setDepartments] = useState<any[]>([]);
@@ -27,7 +30,7 @@ export const AdminStudents = () => {
   const fetchStudents = async () => {
     try {
       const res = await api.get('/admin/students');
-      setStudents(res.data.data || []);
+      setStudents(res.data.data?.items || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -73,11 +76,14 @@ export const AdminStudents = () => {
   const filteredDeptCourses = courses.filter(c => !formData.departmentId || c.departmentId === formData.departmentId);
   const filteredSections = sections.filter(s => !formData.courseId || s.courseId === formData.courseId);
 
-  const filtered = students.filter(s => 
-    s.name?.toLowerCase().includes(search.toLowerCase()) || 
-    s.user?.name?.toLowerCase().includes(search.toLowerCase()) || 
-    s.studentId?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = students.filter(s => {
+    const matchSearch = (s.name && s.name.toLowerCase().includes(search.toLowerCase())) || 
+                        (s.studentId && s.studentId.toLowerCase().includes(search.toLowerCase()));
+    const matchDept = !selectedDept || s.departmentId === selectedDept;
+    const matchCourse = !selectedCourse || s.courseId === selectedCourse;
+    const matchSection = !selectedSection || s.sectionId === selectedSection;
+    return matchSearch && matchDept && matchCourse && matchSection;
+  });
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading students...</div>;
 
@@ -88,7 +94,19 @@ export const AdminStudents = () => {
           <h1 className="text-2xl font-bold text-gray-900">Students</h1>
           <p className="text-gray-500 mt-1">Manage student accounts and records.</p>
         </div>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+          <select value={selectedDept} onChange={e => { setSelectedDept(e.target.value); setSelectedCourse(''); setSelectedSection(''); }} className="px-3 py-2 border rounded-lg outline-none text-sm bg-white">
+            <option value="">All Departments</option>
+            {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+          </select>
+          <select value={selectedCourse} onChange={e => { setSelectedCourse(e.target.value); setSelectedSection(''); }} disabled={!selectedDept} className="px-3 py-2 border rounded-lg outline-none text-sm bg-white disabled:opacity-50">
+            <option value="">All Courses</option>
+            {courses.filter(c => c.departmentId === selectedDept).map(c => <option key={c.id} value={c.id}>{c.code}</option>)}
+          </select>
+          <select value={selectedSection} onChange={e => setSelectedSection(e.target.value)} disabled={!selectedCourse} className="px-3 py-2 border rounded-lg outline-none text-sm bg-white disabled:opacity-50">
+            <option value="">All Sections</option>
+            {sections.filter(s => s.courseId === selectedCourse).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
           <div className="relative w-full sm:w-64">
             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -124,7 +142,7 @@ export const AdminStudents = () => {
               {filtered.map(student => (
                 <tr key={student.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{student.name || student.user?.name}</div>
+                    <div className="font-medium text-gray-900">{student.name}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">{student.user?.email}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{student.studentId}</td>

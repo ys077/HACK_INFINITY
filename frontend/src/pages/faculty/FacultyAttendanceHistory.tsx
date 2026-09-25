@@ -38,7 +38,7 @@ const FacultyAttendanceHistory = () => {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-4 font-semibold text-gray-600">Date</th>
-                <th className="px-6 py-4 font-semibold text-gray-600">Subject</th>
+                <th className="px-6 py-4 font-semibold text-gray-600">Course</th>
                 <th className="px-6 py-4 font-semibold text-gray-600">Section</th>
                 <th className="px-6 py-4 font-semibold text-gray-600">Duration</th>
                 <th className="px-6 py-4 font-semibold text-gray-600">Status</th>
@@ -53,7 +53,7 @@ const FacultyAttendanceHistory = () => {
                       {new Date(session.createdAt).toLocaleDateString()}
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">{session.class?.subject?.name}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">{session.class?.section?.course?.name}</td>
                   <td className="px-6 py-4 text-gray-500">{session.class?.section}</td>
                   <td className="px-6 py-4 text-gray-900">
                     {session.durationMinutes ? `${session.durationMinutes} min` : 'N/A'}

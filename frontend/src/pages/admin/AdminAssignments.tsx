@@ -48,8 +48,8 @@ export const AdminAssignments = () => {
   };
 
   const filteredClasses = classes.filter(c => 
-    c.subject.name.toLowerCase().includes(search.toLowerCase()) || 
-    c.subject.code.toLowerCase().includes(search.toLowerCase()) ||
+    c.section?.course?.name.toLowerCase().includes(search.toLowerCase()) || 
+    c.section?.course?.code.toLowerCase().includes(search.toLowerCase()) ||
     c.faculty.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -79,7 +79,7 @@ export const AdminAssignments = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b">
-                <th className="px-6 py-4 text-sm font-semibold text-gray-900">Class (Subject - Section)</th>
+                <th className="px-6 py-4 text-sm font-semibold text-gray-900">Class (Course - Section)</th>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900">Schedule</th>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900">Current Faculty</th>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900">Assign Faculty</th>
@@ -89,8 +89,8 @@ export const AdminAssignments = () => {
               {filteredClasses.map(cls => (
                 <tr key={cls.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{cls.subject.name}</div>
-                    <div className="text-sm text-gray-500">{cls.subject.code} - {cls.section.name}</div>
+                    <div className="font-medium text-gray-900">{cls.section?.course?.name}</div>
+                    <div className="text-sm text-gray-500">{cls.section?.course?.code} - {cls.section.name}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {cls.dayOfWeek} {cls.startTime}-{cls.endTime}

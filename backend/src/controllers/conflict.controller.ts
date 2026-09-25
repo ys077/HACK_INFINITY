@@ -119,8 +119,7 @@ export const getAdminConflicts = async (req: AuthenticatedRequest, res: Response
           include: {
             class: {
               include: {
-                subject: true,
-                section: true
+                section: { include: { course: true } }
               }
             }
           }

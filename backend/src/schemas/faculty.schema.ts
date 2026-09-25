@@ -6,6 +6,7 @@ export const facultyCreateSchema = z.object({
   employeeId: z.string().min(1),
   name: z.string().min(1),
   departmentId: z.string().uuid(),
+  courseId: z.string().uuid(),
   phone: z.string().min(7).max(32).optional().or(z.literal('')),
   status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional()
 });
@@ -13,6 +14,7 @@ export const facultyCreateSchema = z.object({
 export const facultyUpdateSchema = z.object({
   name: z.string().min(1).optional(),
   departmentId: z.string().uuid().optional(),
+  courseId: z.string().uuid().optional().or(z.literal('')),
   phone: z.string().min(7).max(32).optional().or(z.literal(''))
 });
 

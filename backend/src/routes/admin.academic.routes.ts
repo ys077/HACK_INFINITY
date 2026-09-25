@@ -3,7 +3,7 @@ import {
   getDepartments, getDepartmentById, createDepartment, updateDepartment,
   getCourses, getCourseById, createCourse, updateCourse,
   getSections, getSectionById, createSection, updateSection,
-  getSubjects, getSubjectById, createSubject, updateSubject,
+
   getClassrooms, getClassroomById, createClassroom, updateClassroom
 } from '../controllers/academic.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
@@ -28,10 +28,7 @@ router.get('/sections/:id', getSectionById);
 router.post('/sections', createSection);
 router.put('/sections/:id', updateSection);
 
-router.get('/subjects', getSubjects);
-router.get('/subjects/:id', getSubjectById);
-router.post('/subjects', createSubject);
-router.put('/subjects/:id', updateSubject);
+
 
 router.get('/classrooms', getClassrooms);
 router.get('/classrooms/:id', getClassroomById);

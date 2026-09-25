@@ -3,7 +3,8 @@ import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import {
   getStudentSummary,
-  getStudentSubjects,
+  getStudentCourses,
+
   getStudentTrends,
   getFacultyClassSummary,
   getFacultyStudentBreakdown,
@@ -17,7 +18,9 @@ router.use(requireAuth);
 
 // --- STUDENT ANALYTICS ---
 router.get('/student/analytics/summary', requireRole('STUDENT'), getStudentSummary);
-router.get('/student/analytics/subjects', requireRole('STUDENT'), getStudentSubjects);
+router.get('/student/analytics/subjects', requireRole('STUDENT'), getStudentCourses);
+router.get('/student/analytics/courses', requireRole('STUDENT'), getStudentCourses);
+
 router.get('/student/analytics/trends', requireRole('STUDENT'), getStudentTrends);
 
 // --- FACULTY ANALYTICS ---

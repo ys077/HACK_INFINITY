@@ -15,7 +15,7 @@ export const createSession = async (req: AuthenticatedRequest, res: Response): P
     const parse = createSessionSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
 
-    const { classId, expectedEndAt, subjectId, classroomId, departmentId } = parse.data;
+    const { classId, expectedEndAt, classroomId, departmentId } = parse.data;
 
     // Resolve faculty
     const faculty = await prisma.faculty.findUnique({ where: { userId: req.user!.id } });
@@ -29,10 +29,6 @@ export const createSession = async (req: AuthenticatedRequest, res: Response): P
     if (!cls) { res.status(404).json({ success: false, message: 'Class not found' }); return; }
     if (cls.facultyId !== faculty.id) { res.status(403).json({ success: false, message: 'Forbidden: Not your class' }); return; }
 
-    // Subject validation
-    if (subjectId && cls.subjectId !== subjectId) {
-      res.status(400).json({ success: false, message: 'Invalid subject for this class' }); return;
-    }
     // Classroom validation
     if (classroomId && cls.classroomId !== classroomId) {
       res.status(400).json({ success: false, message: 'Invalid classroom for this class' }); return;
@@ -64,8 +60,7 @@ export const createSession = async (req: AuthenticatedRequest, res: Response): P
       include: {
         class: {
           include: {
-            subject: true,
-            section: true,
+            section: { include: { course: true } },
             classroom: true
           }
         }
@@ -158,7 +153,7 @@ export const getFacultySessions = async (req: AuthenticatedRequest, res: Respons
     const sessions = await prisma.attendanceSession.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: { class: { include: { subject: true, section: true } } }
+      include: { class: { include: { section: { include: { course: true } } } } }
     });
 
     res.json({ success: true, data: sessions });
@@ -177,8 +172,7 @@ export const getFacultySessionById = async (req: AuthenticatedRequest, res: Resp
       include: {
         class: {
           include: {
-            subject: true,
-            section: true,
+            section: { include: { course: true } },
             classroom: true
           }
         },
@@ -244,7 +238,7 @@ export const getStudentActiveSessions = async (req: AuthenticatedRequest, res: R
       },
       include: {
         class: {
-          include: { subject: true, section: true, faculty: { select: { name: true } }, classroom: true }
+          include: { section: { include: { course: true } }, faculty: { select: { name: true } }, classroom: true }
         }
       }
     });
@@ -298,7 +292,7 @@ export const getStudentSessionHistory = async (req: AuthenticatedRequest, res: R
     const history = await prisma.attendanceSession.findMany({
       where: { classId: { in: classIds } },
       orderBy: { createdAt: 'desc' },
-      include: { class: { include: { subject: true, faculty: { select: { name: true } } } } }
+      include: { class: { include: { section: { include: { course: true } }, faculty: { select: { name: true } } } } }
     });
 
     res.json({ success: true, data: history });
@@ -319,7 +313,7 @@ export const getAdminSessions = async (req: Request, res: Response): Promise<voi
     const sessions = await prisma.attendanceSession.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: { class: { include: { subject: true, section: true } }, faculty: { select: { name: true, employeeId: true } } }
+      include: { class: { include: { section: { include: { course: true } } } }, faculty: { select: { name: true, employeeId: true } } }
     });
     res.json({ success: true, data: sessions });
   } catch (error) {
@@ -331,7 +325,7 @@ export const getAdminSessionById = async (req: Request, res: Response): Promise<
   try {
     const session = await prisma.attendanceSession.findUnique({
       where: { id: (req.params.sessionId as string) },
-      include: { class: { include: { subject: true, section: true, classroom: true } }, faculty: true }
+      include: { class: { include: { section: { include: { course: true } }, classroom: true } }, faculty: true }
     });
     if (!session) { res.status(404).json({ success: false, message: 'Session not found' }); return; }
     res.json({ success: true, data: session });

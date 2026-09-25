@@ -44,8 +44,8 @@ const FacultyClassDetails = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{cls.subject.name}</h1>
-          <p className="text-gray-500 mt-1">{cls.subject.code} • {cls.course} ({cls.section})</p>
+          <h1 className="text-3xl font-bold text-gray-900">{cls.section?.course?.name}</h1>
+          <p className="text-gray-500 mt-1">{cls.section?.course?.code} ({cls.section?.name})</p>
         </div>
         <button 
           onClick={() => setShowStartModal(true)}
@@ -93,8 +93,8 @@ const FacultyClassDetails = () => {
             </div>
             <div className="p-6 space-y-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="font-semibold">{cls.subject.name}</p>
-                <p className="text-sm text-gray-600">{cls.course} ({cls.section}) • {cls.classroom}</p>
+                <p className="font-semibold">{cls.section?.course?.name}</p>
+                <p className="text-sm text-gray-600">({cls.section?.name}) • {cls.classroom}</p>
               </div>
               
               <div>

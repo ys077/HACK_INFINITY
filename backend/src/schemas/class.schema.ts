@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const classCreateSchema = z.object({
-  subjectId: z.string().uuid('Invalid subject ID'),
   sectionId: z.string().uuid('Invalid section ID'),
   facultyId: z.string().uuid('Invalid faculty ID'),
   classroomId: z.string().uuid('Invalid classroom ID')

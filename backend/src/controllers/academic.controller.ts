@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
-import { departmentSchema, courseSchema, sectionSchema, subjectSchema, classroomSchema } from '../schemas/academic.schema.js';
+import { departmentSchema, courseSchema, sectionSchema, classroomSchema } from '../schemas/academic.schema.js';
 
 // --- Department ---
 export const getDepartments = async (req: Request, res: Response): Promise<void> => {
@@ -164,55 +164,7 @@ export const updateSection = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-// --- Subject ---
-export const getSubjects = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const subjects = await prisma.subject.findMany();
-    res.json({ success: true, data: subjects });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
-  }
-};
 
-export const getSubjectById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const subject = await prisma.subject.findUnique({ where: { id: (req.params.id as string) } });
-    if (!subject) { res.status(404).json({ success: false, message: 'Not found' }); return; }
-    res.json({ success: true, data: subject });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
-  }
-};
-
-export const createSubject = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const parse = subjectSchema.safeParse(req.body);
-    if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
-    
-    const existing = await prisma.subject.findUnique({ where: { code: parse.data.code } });
-    if (existing) { res.status(400).json({ success: false, message: 'Code already exists' }); return; }
-
-    const subject = await prisma.subject.create({ data: parse.data });
-    res.status(201).json({ success: true, data: subject });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
-  }
-};
-
-export const updateSubject = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const parse = subjectSchema.safeParse(req.body);
-    if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
-    
-    const subject = await prisma.subject.update({ where: { id: (req.params.id as string) }, data: parse.data }).catch(() => null);
-    if (!subject) { res.status(404).json({ success: false, message: 'Not found' }); return; }
-
-    res.json({ success: true, data: subject });
-  } catch (error: any) {
-    if (error.code === 'P2002') { res.status(400).json({ success: false, message: 'Code already exists' }); return; }
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
-  }
-};
 
 // --- Classroom ---
 export const getClassrooms = async (req: Request, res: Response): Promise<void> => {

@@ -48,7 +48,7 @@ const FacultyDashboard = () => {
       <div className="w-full space-y-space-lg pb-space-xl">
         <div className="flex justify-end items-center mb-4">
           <Link
-            to="/faculty/session/start"
+            to="/faculty/sessions/start"
             className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-fixed-variant font-title-md transition-colors shadow-sm"
           >
             <span className="material-symbols-outlined text-[20px]">play_arrow</span>
@@ -85,7 +85,7 @@ const FacultyDashboard = () => {
                     </span>
                     <span className="font-label-sm text-tertiary font-mono">{session.id}</span>
                   </div>
-                  <h3 className="font-headline-sm text-headline-sm text-on-surface">{session.class?.subject?.name || 'Active Session'}</h3>
+                  <h3 className="font-headline-sm text-headline-sm text-on-surface">{session.class?.section?.course?.name || 'Active Session'}</h3>
                   <div className="font-body-md text-tertiary mt-1">{session.class?.section?.name} • {session.class?.classroom?.name}</div>
                 </div>
                 <Link
@@ -153,9 +153,9 @@ const FacultyDashboard = () => {
               <div key={cls.id} className="p-space-lg rounded-2xl bg-surface-container-lowest flex flex-col justify-between gap-space-md" style={{ border: '1px solid #E5E7EF' }}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-title-lg text-title-lg text-on-surface">{cls.subject?.name}</h3>
+                    <h3 className="font-title-lg text-title-lg text-on-surface">{cls.section?.course?.name}</h3>
                     <div className="font-body-md text-tertiary mt-1">
-                      {cls.subject?.code} • {cls.section?.course?.name} ({cls.section?.name})
+                      {cls.section?.course?.code} • ({cls.section?.name})
                     </div>
                   </div>
                   <span className="px-space-sm py-1 bg-surface-container text-on-surface-variant text-xs font-semibold rounded-lg font-mono">

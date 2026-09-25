@@ -72,10 +72,7 @@ export const AdminDashboard = () => {
               <p className="text-2xl font-bold text-gray-900">{metrics.totalClasses}</p>
               <p className="text-sm text-gray-500">Classes</p>
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{metrics.totalSubjects}</p>
-              <p className="text-sm text-gray-500">Subjects</p>
-            </div>
+
           </div>
         </div>
 

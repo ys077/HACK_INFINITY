@@ -39,16 +39,16 @@ const FacultyClasses = () => {
             <div key={cls.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex-1 space-y-2">
                 <div className="flex items-center space-x-2">
-                  <h3 className="text-xl font-bold text-gray-900">{cls.subject.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">{cls.section?.course?.name}</h3>
                   <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full">
-                    {cls.section?.course?.name} ({cls.section?.name})
+                    {cls.section?.name}
                   </span>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
                   <div className="flex items-center">
                     <BookOpen size={16} className="mr-2 text-gray-400" />
-                    <span>{cls.subject.code}</span>
+                    <span>{cls.section?.course?.code}</span>
                   </div>
                   <div className="flex items-center">
                     <MapPin size={16} className="mr-2 text-gray-400" />

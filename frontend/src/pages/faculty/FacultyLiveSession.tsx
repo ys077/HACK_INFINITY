@@ -109,7 +109,7 @@ const FacultyLiveSession = () => {
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <div className="flex items-center space-x-3 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">{session.class?.subject?.name || 'Class'}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{session.class?.section?.course?.name || 'Class'}</h1>
               {isEnded ? (
                 <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-semibold rounded-full">ENDED</span>
               ) : (
@@ -119,7 +119,7 @@ const FacultyLiveSession = () => {
               )}
             </div>
             <p className="text-gray-500 text-sm">
-              {session.class?.course} ({session.class?.section}) • {session.class?.classroom} • Started {new Date(session.createdAt).toLocaleTimeString()}
+              {session.class?.section?.course?.code} ({session.class?.section?.name}) • {session.class?.classroom?.name} • Started {new Date(session.createdAt).toLocaleTimeString()}
             </p>
           </div>
           

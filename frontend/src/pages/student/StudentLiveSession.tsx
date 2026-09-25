@@ -10,9 +10,10 @@ import {
 } from 'lucide-react';
 
 const StudentLiveSession = () => {
-  const { sessionId } = useParams();
+  const params = useParams();
   const navigate = useNavigate();
   
+  const [sessionId, setSessionId] = useState<string | undefined>(params.id || params.sessionId);
   const [session, setSession] = useState<any>(null);
   const [presenceState, setPresenceState] = useState<any>(null);
   const [device, setDevice] = useState<any>(null);
@@ -28,15 +29,29 @@ const StudentLiveSession = () => {
     try {
       // 1. Fetch Session
       const sessionRes = await api.get(`/student/sessions/active`);
-      const activeSession = sessionRes.data.data.find((s: any) => s.id === sessionId);
+      const activeSessions = sessionRes.data.data;
+      
+      let targetSessionId = sessionId;
+      if (!targetSessionId) {
+        if (activeSessions.length > 0) {
+          targetSessionId = activeSessions[0].id;
+          setSessionId(targetSessionId);
+          navigate(`/student/sessions/${targetSessionId}`, { replace: true });
+        } else {
+          setLoading(false);
+          return;
+        }
+      }
+
+      const activeSession = activeSessions.find((s: any) => s.id === targetSessionId);
       if (activeSession) {
         setSession(activeSession);
       } else {
         // Fallback: check if it ended
         const historyRes = await api.get('/student/sessions/history');
-        const pastSession = historyRes.data.data?.sessions?.find((s: any) => s.sessionId === sessionId);
+        const pastSession = historyRes.data.data?.sessions?.find((s: any) => s.sessionId === targetSessionId);
         if (pastSession) {
-          navigate(`/student/attendance/${sessionId}`);
+          navigate(`/student/attendance/${targetSessionId}`);
           return;
         }
       }
@@ -50,11 +65,11 @@ const StudentLiveSession = () => {
       }
 
       // 3. Fetch Presence Status
-      const statusRes = await api.get(`/presence/${sessionId}/status`);
+      const statusRes = await api.get(`/presence/${targetSessionId}/status`);
       setPresenceState(statusRes.data.data);
       
       // Also fetch verified seconds from attendance API if available
-      const attRes = await api.get(`/student/sessions/${sessionId}/attendance`).catch(() => null);
+      const attRes = await api.get(`/student/sessions/${targetSessionId}/attendance`).catch(() => null);
       if (attRes?.data?.data?.verifiedSeconds !== undefined) {
         setVerifiedSeconds(attRes.data.data.verifiedSeconds);
       }
@@ -157,7 +172,13 @@ const StudentLiveSession = () => {
   };
 
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading live session...</div>;
-  if (!session) return <div className="flex items-center justify-center h-64 text-gray-500">Session not found or ended.</div>;
+  if (!sessionId || !session) return (
+    <div className="flex flex-col items-center justify-center h-64 text-gray-500 gap-4">
+      <Radio className="w-12 h-12 text-gray-300" />
+      <p className="text-lg font-medium">No Active Sessions Right Now</p>
+      <p className="text-sm">When a faculty member starts a class, it will appear here.</p>
+    </div>
+  );
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -267,7 +288,7 @@ const StudentLiveSession = () => {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-gray-900 leading-tight">{session.class?.subject?.name}</h1>
+          <h1 className="text-xl font-bold text-gray-900 leading-tight">{session.class?.section?.course?.name}</h1>
           <div className="text-sm font-medium text-gray-500 flex items-center gap-2">
             <span>{session.class?.section?.name}</span>
             <span>•</span>

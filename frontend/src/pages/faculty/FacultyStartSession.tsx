@@ -9,10 +9,10 @@ const FacultyStartSession = () => {
   const navigate = useNavigate();
 
   const [selectedDept, setSelectedDept] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedClassroom, setSelectedClassroom] = useState('');
-  const [duration, setDuration] = useState('60');
+  const [duration, setDuration] = useState('50');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [showSummary, setShowSummary] = useState(false);
@@ -26,7 +26,14 @@ const FacultyStartSession = () => {
           api.get('/faculty/profile')
         ]);
         setClasses(clsRes.data.data || []);
-        setFacultyInfo(facRes.data.data || null);
+        
+        const info = facRes.data.data || null;
+        setFacultyInfo(info);
+        
+        if (info) {
+          if (info.department?.name) setSelectedDept(info.department.name);
+          if (info.course?.name) setSelectedCourse(info.course.name);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -38,19 +45,25 @@ const FacultyStartSession = () => {
 
   const departments = Array.from(new Set(classes.map(c => c.section?.course?.department?.name).filter(Boolean)));
   
-  const availableClasses = classes.filter(c => !selectedDept || c.section?.course?.department?.name === selectedDept);
-  const classNames = Array.from(new Set(availableClasses.map(c => `${c.section?.course?.name} - ${c.section?.name}`).filter(Boolean)));
+  const availableClassesForDept = classes.filter(c => !selectedDept || c.section?.course?.department?.name === selectedDept);
+  
+  const courses = Array.from(new Set(availableClassesForDept.map(c => c.section?.course?.name).filter(Boolean)));
+  
+  const availableClassesForCourse = availableClassesForDept.filter(c => !selectedCourse || c.section?.course?.name === selectedCourse);
+  
+  const sections = Array.from(new Set(availableClassesForCourse.map(c => c.section?.name).filter(Boolean)));
 
-  const availableSubjects = availableClasses.filter(c => !selectedClass || `${c.section?.course?.name} - ${c.section?.name}` === selectedClass);
-  const subjects = Array.from(new Set(availableSubjects.map(c => c.subject?.name).filter(Boolean)));
-
-  const availableRooms = availableSubjects.filter(c => !selectedSubject || c.subject?.name === selectedSubject);
+  const availableRooms = classes.filter(c => 
+    (!selectedDept || c.section?.course?.department?.name === selectedDept) &&
+    (!selectedCourse || c.section?.course?.name === selectedCourse) &&
+    (!selectedClass || c.section?.name === selectedClass)
+  );
   const rooms = Array.from(new Set(availableRooms.map(c => c.classroom?.name).filter(Boolean)));
 
   const targetClass = classes.find(c => 
     c.section?.course?.department?.name === selectedDept &&
-    `${c.section?.course?.name} - ${c.section?.name}` === selectedClass &&
-    c.subject?.name === selectedSubject &&
+    c.section?.course?.name === selectedCourse &&
+    c.section?.name === selectedClass &&
     c.classroom?.name === selectedClassroom
   );
 
@@ -102,15 +115,16 @@ const FacultyStartSession = () => {
             </div>
             
             <div>
-              <p className="text-sm text-gray-500 font-medium">Class</p>
-              <p className="text-lg font-semibold text-gray-900">{selectedClass}</p>
+              <p className="text-sm text-gray-500 font-medium">Course</p>
+              <p className="text-lg font-semibold text-gray-900">{selectedCourse}</p>
             </div>
             
             <div>
-              <p className="text-sm text-gray-500 font-medium">Subject</p>
-              <p className="text-lg font-semibold text-gray-900">{selectedSubject}</p>
+              <p className="text-sm text-gray-500 font-medium">Section</p>
+              <p className="text-lg font-semibold text-gray-900">{selectedClass}</p>
             </div>
             
+
             <div>
               <p className="text-sm text-gray-500 font-medium">Classroom</p>
               <p className="text-lg font-semibold text-gray-900">{selectedClassroom}</p>
@@ -168,53 +182,31 @@ const FacultyStartSession = () => {
       
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">1. Select Department</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Select Class to Start</label>
           <select 
-            value={selectedDept} 
-            onChange={e => { setSelectedDept(e.target.value); setSelectedClass(''); setSelectedSubject(''); setSelectedClassroom(''); }} 
+            value={targetClass?.id || ''} 
+            onChange={e => {
+              const cls = classes.find(c => c.id === e.target.value);
+              if (cls) {
+                setSelectedDept(cls.section?.course?.department?.name || '');
+                setSelectedCourse(cls.section?.course?.name || '');
+                setSelectedClass(cls.section?.name || '');
+                setSelectedClassroom(cls.classroom?.name || '');
+              } else {
+                setSelectedDept('');
+                setSelectedCourse('');
+                setSelectedClass('');
+                setSelectedClassroom('');
+              }
+            }} 
             className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none"
           >
-            <option value="">Choose department...</option>
-            {departments.map((d: any) => <option key={d} value={d}>{d}</option>)}
-          </select>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">2. Select Class</label>
-          <select 
-            value={selectedClass} 
-            onChange={e => { setSelectedClass(e.target.value); setSelectedSubject(''); setSelectedClassroom(''); }} 
-            disabled={!selectedDept} 
-            className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none disabled:opacity-50"
-          >
-            <option value="">Choose class & section...</option>
-            {classNames.map((c: any) => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">3. Select Subject</label>
-          <select 
-            value={selectedSubject} 
-            onChange={e => { setSelectedSubject(e.target.value); setSelectedClassroom(''); }} 
-            disabled={!selectedClass} 
-            className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none disabled:opacity-50"
-          >
-            <option value="">Choose subject...</option>
-            {subjects.map((s: any) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">4. Select Classroom</label>
-          <select 
-            value={selectedClassroom} 
-            onChange={e => setSelectedClassroom(e.target.value)} 
-            disabled={!selectedSubject} 
-            className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none disabled:opacity-50"
-          >
-            <option value="">Choose classroom...</option>
-            {rooms.map((r: any) => <option key={r} value={r}>{r}</option>)}
+            <option value="">Choose a class...</option>
+            {classes.map((c: any) => (
+              <option key={c.id} value={c.id}>
+                {c.section?.course?.department?.name} - {c.section?.course?.name} (Sec {c.section?.name}) @ {c.classroom?.name}
+              </option>
+            ))}
           </select>
         </div>
         
@@ -225,20 +217,16 @@ const FacultyStartSession = () => {
             onChange={e => setDuration(e.target.value)} 
             className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none"
           >
-            <option value="30">30 minutes</option>
-            <option value="45">45 minutes</option>
-            <option value="60">1 hour (Recommended)</option>
-            <option value="90">1.5 hours</option>
-            <option value="120">2 hours</option>
+            <option value="50">50 minutes</option>
           </select>
         </div>
 
         <button 
-          onClick={handleReview}
-          disabled={!targetClass}
+          onClick={handleStart}
+          disabled={!targetClass || isSubmitting}
           className="w-full py-3.5 mt-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors shadow-sm"
         >
-          REVIEW SESSION
+          {isSubmitting ? 'STARTING...' : 'START SESSION'}
         </button>
       </div>
     </div>

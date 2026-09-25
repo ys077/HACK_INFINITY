@@ -40,7 +40,7 @@ export const getStudentHistory = async (req: AuthenticatedRequest, res: Response
         session: {
           include: {
             class: {
-              include: { subject: true }
+              include: { section: { include: { course: true } } }
             }
           }
         }
@@ -50,7 +50,7 @@ export const getStudentHistory = async (req: AuthenticatedRequest, res: Response
 
     const sessions = records.map((r: any) => ({
       sessionId: r.sessionId,
-      subject: r.session.class.subject.name,
+      courseName: r.session.class.section?.course?.name || 'Unknown',
       date: r.session.startedAt,
       verifiedMinutes: Math.floor(r.totalPresentSeconds / 60),
       attendancePercentage: r.presencePercentage,
@@ -131,7 +131,7 @@ export const getFacultyStudentHistory = async (req: AuthenticatedRequest, res: R
       },
       include: {
         session: {
-          include: { class: { include: { subject: true } } }
+          include: { class: { include: { section: { include: { course: true } } } } }
         }
       },
       orderBy: { session: { startedAt: 'desc' } }
@@ -139,7 +139,7 @@ export const getFacultyStudentHistory = async (req: AuthenticatedRequest, res: R
 
     const sessions = records.map((r: any) => ({
       sessionId: r.sessionId,
-      subject: r.session.class.subject.name,
+      courseName: r.session.class.section?.course?.name || 'Unknown',
       date: r.session.startedAt,
       verifiedMinutes: Math.floor(r.totalPresentSeconds / 60),
       attendancePercentage: r.presencePercentage,

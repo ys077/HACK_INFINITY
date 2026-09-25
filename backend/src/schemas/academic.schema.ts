@@ -17,12 +17,6 @@ export const sectionSchema = z.object({
   courseId: z.string().uuid('Invalid course ID')
 });
 
-export const subjectSchema = z.object({
-  code: z.string().min(1, 'Code is required'),
-  name: z.string().min(1, 'Name is required'),
-  credits: z.number().int().min(1).max(20)
-});
-
 export const classroomSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   building: z.string().min(1, 'Building is required'),

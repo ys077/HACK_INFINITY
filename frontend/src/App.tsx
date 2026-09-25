@@ -11,6 +11,10 @@ import Login from './pages/Login';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminStudents from './pages/admin/AdminStudents';
+import AdminFaculty from './pages/admin/AdminFaculty';
+import AdminAttendanceAnalytics from './pages/admin/AdminAttendanceAnalytics';
+import AdminSettings from './pages/admin/AdminSettings';
 
 // Student Pages
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -40,8 +44,9 @@ import FacultyReports from './pages/faculty/FacultyReports';
 import './App.css';
 
 const ProtectedRoute = ({ children, role }: { children: React.ReactNode, role: 'STUDENT' | 'FACULTY' | 'ADMIN' }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
   
+  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (user?.role !== role) return <Navigate to="/login" replace />;
   
@@ -62,6 +67,10 @@ function App() {
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute role="ADMIN"><AdminLayout /></ProtectedRoute>}>
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="students" element={<AdminStudents />} />
+            <Route path="faculty" element={<AdminFaculty />} />
+            <Route path="analytics" element={<AdminAttendanceAnalytics />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
 
           {/* Student Routes */}

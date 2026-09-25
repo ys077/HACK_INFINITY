@@ -17,12 +17,12 @@ export const getStudentSummary = async (req: AuthenticatedRequest, res: Response
   }
 };
 
-export const getStudentSubjects = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getStudentCourses = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const student = await prisma.student.findUnique({ where: { userId: req.user!.id } });
     if (!student) { res.status(403).json({ success: false, message: 'Forbidden' }); return; }
 
-    const data = await AttendanceAnalyticsService.getStudentSubjects(student.id);
+    const data = await AttendanceAnalyticsService.getStudentCourses(student.id);
     res.json({ success: true, data });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });

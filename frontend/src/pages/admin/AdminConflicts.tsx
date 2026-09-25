@@ -26,7 +26,7 @@ export const AdminConflicts = () => {
   const filtered = conflicts.filter(c => 
     c.student.user.name.toLowerCase().includes(search.toLowerCase()) || 
     c.type.toLowerCase().includes(search.toLowerCase()) ||
-    c.session.class.subject.name.toLowerCase().includes(search.toLowerCase())
+    c.session.class.section?.course?.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading conflicts...</div>;
@@ -94,7 +94,7 @@ export const AdminConflicts = () => {
                 <div className="flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{conflict.session.class.subject.name}</p>
+                    <p className="text-sm font-medium text-gray-900">{conflict.session.class.section?.course?.name}</p>
                     <p className="text-xs text-gray-500">Session ID: {conflict.session.id.substring(0,8)}</p>
                   </div>
                 </div>

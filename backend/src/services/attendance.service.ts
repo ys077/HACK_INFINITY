@@ -102,7 +102,7 @@ export class AttendanceService {
     const sessionDurationSeconds = Math.floor((sessionEnd.getTime() - sessionStart.getTime()) / 1000);
     const percentage = sessionDurationSeconds > 0 ? (verifiedSeconds / sessionDurationSeconds) * 100 : 0;
     
-    const status: AttendanceStatus = percentage >= 75 ? 'PRESENT' : percentage >= 25 ? 'PARTIAL' : 'ABSENT';
+    const status: AttendanceStatus = percentage >= 75 ? 'PRESENT' : percentage >= 25 ? 'LATE' : 'ABSENT';
 
     return {
       studentId,
@@ -148,7 +148,7 @@ export class AttendanceService {
         const verifiedSeconds = intervals.reduce((acc, interval) => acc + interval.durationSeconds, 0);
         const absentSeconds = sessionDurationSeconds - verifiedSeconds;
         const percentage = sessionDurationSeconds > 0 ? (verifiedSeconds / sessionDurationSeconds) * 100 : 0;
-        const status: AttendanceStatus = percentage >= 75 ? 'PRESENT' : percentage >= 25 ? 'PARTIAL' : 'ABSENT';
+        const status: AttendanceStatus = percentage >= 75 ? 'PRESENT' : percentage >= 25 ? 'LATE' : 'ABSENT';
 
         await tx.attendanceRecord.upsert({
           where: { sessionId_studentId: { sessionId, studentId } },

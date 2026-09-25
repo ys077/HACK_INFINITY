@@ -41,7 +41,11 @@ import { globalLimiter } from './middleware/rate-limit.middleware.js';
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'http://localhost',
+    'capacitor://localhost'
+  ],
   credentials: true
 }));
 app.use(helmet());

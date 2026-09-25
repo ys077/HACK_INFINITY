@@ -67,6 +67,8 @@ model Faculty {
   phone        String?
   departmentId String
   department   Department @relation(fields: [departmentId], references: [id])
+  courseId     String
+  course       Course     @relation(fields: [courseId], references: [id])
   
   classes      Class[]
   attendanceSessions AttendanceSession[]
@@ -107,6 +109,7 @@ model Course {
 
   students     Student[]
   sections     Section[]
+  faculty      Faculty[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -128,22 +131,10 @@ model Section {
   @@unique([name, courseId, year])
 }
 
-model Subject {
-  id           String   @id @default(uuid())
-  code         String   @unique
-  name         String
-  credits      Int
 
-  classes      Class[]
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
 
 model Class {
   id           String   @id @default(uuid())
-  subjectId    String
-  subject      Subject  @relation(fields: [subjectId], references: [id])
   sectionId    String
   section      Section  @relation(fields: [sectionId], references: [id])
   facultyId    String

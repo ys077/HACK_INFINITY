@@ -43,9 +43,9 @@ const StudentClassDetails = () => {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 leading-tight">{cls.subject?.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 leading-tight">{cls.section?.course?.name}</h1>
           <div className="text-sm font-medium text-gray-500 mt-1 flex items-center gap-2">
-            <span>{cls.subject?.code}</span>
+            <span>{cls.section?.course?.code}</span>
             <span>•</span>
             <span className="text-blue-600 uppercase font-semibold">{cls.section?.name}</span>
           </div>
@@ -64,9 +64,9 @@ const StudentClassDetails = () => {
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-500">Subject</div>
-                  <div className="font-semibold text-gray-900">{cls.subject?.name}</div>
-                  <div className="text-xs text-gray-500">{cls.subject?.code}</div>
+                  <div className="text-sm font-medium text-gray-500">Course</div>
+                  <div className="font-semibold text-gray-900">{cls.section?.course?.name}</div>
+                  <div className="text-xs text-gray-500">{cls.section?.course?.code}</div>
                 </div>
               </div>
 

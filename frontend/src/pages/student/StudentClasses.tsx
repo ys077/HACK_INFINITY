@@ -30,7 +30,7 @@ const StudentClasses = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Classes</h1>
-          <p className="text-gray-500 mt-1">View your enrolled subjects and schedules.</p>
+          <p className="text-gray-500 mt-1">View your enrolled courses and schedules.</p>
         </div>
         <div className="relative">
           <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -58,8 +58,8 @@ const StudentClasses = () => {
                     {cls.section?.name}
                   </span>
                 </div>
-                <h3 className="font-bold text-lg text-gray-900 leading-tight">{cls.subject?.name}</h3>
-                <div className="text-sm font-medium text-gray-500 mt-1">{cls.subject?.code}</div>
+                <h3 className="font-bold text-lg text-gray-900 leading-tight">{cls.section?.course?.name}</h3>
+                <div className="text-sm font-medium text-gray-500 mt-1">{cls.section?.course?.code}</div>
               </div>
               <div className="p-5 grow space-y-3">
                 <div className="flex items-center gap-3 text-sm text-gray-600">

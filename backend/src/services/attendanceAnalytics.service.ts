@@ -56,15 +56,17 @@ export class AttendanceAnalyticsService {
     };
   }
 
-  static async getStudentSubjects(studentId: string) {
-    // get all classes student is enrolled in
+  static async getStudentCourses(studentId: string) {
     const enrollments = await prisma.enrollment.findMany({
       where: { studentId, status: 'ACTIVE' },
       include: {
         class: {
           include: {
-            subject: true,
+            section: {
+              include: { course: true }
+            },
             attendanceSessions: {
+              where: { status: 'ENDED' },
               include: {
                 attendanceRecords: {
                   where: { studentId }
@@ -76,48 +78,34 @@ export class AttendanceAnalyticsService {
       }
     });
 
-    const subjects = enrollments.map(e => {
-      const cls = e.class;
-      const completedSessions = cls.attendanceSessions.filter(s => s.status === 'ENDED');
-      const totalSessions = completedSessions.length;
-      
-      let attendedSessions = 0;
-      let partialSessions = 0;
-      let missedSessions = 0;
-      let totalVerified = 0;
-      let totalSessionSecs = 0;
+    const courses = enrollments.map(e => {
+      let sumPresent = 0;
+      let sumTotal = 0;
 
-      completedSessions.forEach(session => {
-        const record = session.attendanceRecords[0];
-        if (record) {
-          totalVerified += record.totalPresentSeconds;
-          totalSessionSecs += (record.totalPresentSeconds + record.totalAbsentSeconds);
-          if (record.status === 'PRESENT') attendedSessions++;
-          else if (record.presencePercentage > 0) partialSessions++;
-          else missedSessions++;
-        } else {
-          missedSessions++; // No record means missed
-        }
+      e.class.attendanceSessions.forEach(session => {
+        session.attendanceRecords.forEach(r => {
+          sumPresent += r.totalPresentSeconds;
+          sumTotal += (r.totalPresentSeconds + r.totalAbsentSeconds);
+        });
       });
 
-      const attendancePercentage = totalSessionSecs > 0 
-        ? Number(((totalVerified / totalSessionSecs) * 100).toFixed(2)) 
-        : 100;
-
       return {
-        subjectId: cls.subjectId,
-        subjectName: cls.subject.name,
-        subjectCode: cls.subject.code,
-        totalSessions,
-        attendedSessions,
-        partialSessions,
-        missedSessions,
-        totalVerifiedSeconds: totalVerified,
-        attendancePercentage
+        courseId: e.class.section?.course?.id || e.class.id,
+        courseName: e.class.section?.course?.name || 'Unknown Course',
+        courseCode: e.class.section?.course?.code || '',
+        totalSessions: e.class.attendanceSessions.length,
+        attendancePercentage: sumTotal > 0 ? Number(((sumPresent / sumTotal) * 100).toFixed(2)) : 100
       };
     });
 
-    return { subjects };
+    const grouped = new Map<string, any>();
+    courses.forEach(c => {
+      if (!grouped.has(c.courseId)) {
+        grouped.set(c.courseId, c);
+      }
+    });
+
+    return { courses: Array.from(grouped.values()) };
   }
 
   static async getStudentTrends(studentId: string, from?: string, to?: string) {
@@ -289,7 +277,7 @@ export class AttendanceAnalyticsService {
       activeSessions,
       completedSessionsToday,
       totalClasses,
-      totalSubjects,
+
       totalDepartments,
       totalCourses,
       totalSections,
@@ -301,9 +289,9 @@ export class AttendanceAnalyticsService {
       prisma.faculty.count(),
       prisma.attendanceSession.count({ where: { status: 'ENDED' } }),
       prisma.attendanceSession.count({ where: { status: 'IN_PROGRESS' as any } }),
-      prisma.attendanceSession.count({ where: { status: 'ENDED', endTime: { gte: today } } }),
+      prisma.attendanceSession.count({ where: { status: 'ENDED', endedAt: { gte: today } } }),
       prisma.class.count(),
-      prisma.subject.count(),
+
       prisma.department.count(),
       prisma.course.count(),
       prisma.section.count(),
@@ -330,7 +318,7 @@ export class AttendanceAnalyticsService {
       activeSessions,
       completedSessionsToday,
       totalClasses,
-      totalSubjects,
+
       totalDepartments,
       totalCourses,
       totalSections,

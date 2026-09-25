@@ -9,7 +9,6 @@ export const getClasses = async (req: Request, res: Response): Promise<void> => 
   try {
     const classes = await prisma.class.findMany({
       include: {
-        subject: true,
         section: { include: { course: { include: { department: true } } } },
         faculty: true,
         classroom: true,
@@ -27,7 +26,6 @@ export const getClassById = async (req: Request, res: Response): Promise<void> =
     const cls = await prisma.class.findUnique({
       where: { id: (req.params.id as string) },
       include: {
-        subject: true,
         faculty: { select: { id: true, employeeId: true, name: true, userId: true, departmentId: true } },
         classroom: true,
         section: { include: { course: { include: { department: true } } } },
@@ -46,16 +44,15 @@ export const createClass = async (req: Request, res: Response): Promise<void> =>
     const parse = classCreateSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
 
-    const { subjectId, sectionId, facultyId, classroomId } = parse.data;
+    const { sectionId, facultyId, classroomId } = parse.data;
 
-    const [subject, section, faculty, classroom] = await Promise.all([
-      prisma.subject.findUnique({ where: { id: subjectId } }),
+    const [section, faculty, classroom] = await Promise.all([
       prisma.section.findUnique({ where: { id: sectionId } }),
       prisma.faculty.findUnique({ where: { id: facultyId }, include: { user: true } }),
       prisma.classroom.findUnique({ where: { id: classroomId } })
     ]);
 
-    if (!subject) { res.status(400).json({ success: false, message: 'Invalid subject' }); return; }
+
     if (!section) { res.status(400).json({ success: false, message: 'Invalid section' }); return; }
     if (!faculty) { res.status(400).json({ success: false, message: 'Invalid faculty' }); return; }
     if (faculty.user.status !== 'ACTIVE') { res.status(400).json({ success: false, message: 'Faculty is not active' }); return; }
@@ -69,7 +66,7 @@ export const createClass = async (req: Request, res: Response): Promise<void> =>
       action: 'CLASS_CREATED',
       entityType: 'Class',
       entityId: cls.id,
-      metadata: { subjectId, sectionId, facultyId, classroomId }
+      metadata: { sectionId, facultyId, classroomId }
     });
 
     res.status(201).json({ success: true, data: cls });
@@ -87,20 +84,18 @@ export const updateClass = async (req: Request, res: Response): Promise<void> =>
     if (!existing) { res.status(404).json({ success: false, message: 'Class not found' }); return; }
 
     const next = {
-      subjectId: parse.data.subjectId ?? existing.subjectId,
       sectionId: parse.data.sectionId ?? existing.sectionId,
       facultyId: parse.data.facultyId ?? existing.facultyId,
       classroomId: parse.data.classroomId ?? existing.classroomId
     };
 
-    const [subject, section, faculty, classroom] = await Promise.all([
-      prisma.subject.findUnique({ where: { id: next.subjectId } }),
+    const [section, faculty, classroom] = await Promise.all([
       prisma.section.findUnique({ where: { id: next.sectionId } }),
       prisma.faculty.findUnique({ where: { id: next.facultyId }, include: { user: true } }),
       prisma.classroom.findUnique({ where: { id: next.classroomId } })
     ]);
 
-    if (!subject) { res.status(400).json({ success: false, message: 'Invalid subject' }); return; }
+
     if (!section) { res.status(400).json({ success: false, message: 'Invalid section' }); return; }
     if (!faculty) { res.status(400).json({ success: false, message: 'Invalid faculty' }); return; }
     if (faculty.user.status !== 'ACTIVE') { res.status(400).json({ success: false, message: 'Faculty is not active' }); return; }
@@ -111,7 +106,6 @@ export const updateClass = async (req: Request, res: Response): Promise<void> =>
       where: { id: existing.id },
       data: next,
       include: {
-        subject: true,
         section: { include: { course: { include: { department: true } } } },
         faculty: true,
         classroom: true
@@ -127,7 +121,6 @@ export const updateClass = async (req: Request, res: Response): Promise<void> =>
         metadata: {
           previousFacultyId: existing.facultyId,
           facultyId: parse.data.facultyId,
-          subjectId: next.subjectId,
           classroomId: next.classroomId
         }
       });
@@ -148,7 +141,6 @@ export const getFacultyClasses = async (req: AuthenticatedRequest, res: Response
     const classes = await prisma.class.findMany({
       where: { facultyId: faculty.id },
       include: {
-        subject: true,
         section: {
           include: {
             course: {
@@ -176,7 +168,6 @@ export const getFacultyClassById = async (req: AuthenticatedRequest, res: Respon
     const cls = await prisma.class.findUnique({
       where: { id: (req.params.classId as string) },
       include: {
-        subject: true,
         section: true,
         classroom: true,
         _count: { select: { enrollments: true } },
@@ -208,7 +199,6 @@ export const getStudentClasses = async (req: AuthenticatedRequest, res: Response
       include: {
         class: {
           include: {
-            subject: true,
             section: true,
             faculty: { select: { name: true } },
             classroom: true
@@ -233,7 +223,6 @@ export const getStudentClassById = async (req: AuthenticatedRequest, res: Respon
       include: {
         class: {
           include: {
-            subject: true,
             section: true,
             faculty: { select: { name: true } },
             classroom: true

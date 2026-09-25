@@ -32,6 +32,7 @@ export const getFaculty = async (req: Request, res: Response): Promise<void> => 
         include: {
           user: { select: { id: true, email: true, status: true, role: true } },
           department: true,
+          course: true,
           _count: {
             select: { classes: true }
           }
@@ -65,6 +66,7 @@ export const getFacultyById = async (req: Request, res: Response): Promise<void>
       include: {
         user: { select: { id: true, email: true, status: true, role: true } },
         department: true,
+        course: true,
         _count: {
           select: { classes: true }
         }
@@ -91,7 +93,7 @@ export const createFaculty = async (req: AuthenticatedRequest, res: Response): P
       return;
     }
 
-    const { email, password, employeeId, name, departmentId, phone, status } = parseResult.data;
+    const { email, password, employeeId, name, departmentId, courseId, phone, status } = parseResult.data;
 
     const [existingUser, existingFaculty] = await Promise.all([
       prisma.user.findUnique({ where: { email } }),
@@ -132,11 +134,13 @@ export const createFaculty = async (req: AuthenticatedRequest, res: Response): P
           employeeId,
           name,
           departmentId,
+          courseId,
           phone: normalizedPhone
         },
         include: {
           user: { select: { id: true, email: true, status: true, role: true } },
-          department: true
+          department: true,
+          course: true
         }
       });
 
@@ -221,7 +225,8 @@ export const getOwnFacultyProfile = async (req: AuthenticatedRequest, res: Respo
       where: { userId: req.user!.id },
       include: {
         user: { select: { id: true, email: true, status: true, role: true } },
-        department: true
+        department: true,
+        course: true
       }
     });
 

@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         try {
           const res = await api.get('/auth/me');
-          setUser(res.data.data);
+          setUser(res.data.data.user);
         } catch (error) {
           localStorage.removeItem('token');
         }

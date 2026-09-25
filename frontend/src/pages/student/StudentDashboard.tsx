@@ -13,6 +13,8 @@ const StudentDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let intervalId: any;
+    
     const fetchData = async () => {
       try {
         const [clsRes, sessionRes, deviceRes, historyRes] = await Promise.all([
@@ -37,7 +39,20 @@ const StudentDashboard = () => {
         setLoading(false);
       }
     };
+    
     fetchData();
+
+    // Poll for active sessions every 10 seconds so it dynamically updates when faculty starts a session
+    intervalId = setInterval(async () => {
+      try {
+        const sessionRes = await api.get('/student/sessions/active');
+        setActiveSessions(sessionRes.data.data);
+      } catch (err) {
+        console.error("Failed to poll active sessions", err);
+      }
+    }, 10000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {
@@ -73,7 +88,7 @@ const StudentDashboard = () => {
                 <div className="space-y-space-sm mt-space-md">
                   <div className="inline-flex items-center gap-space-sm px-space-md py-2 rounded-xl bg-white/10 backdrop-blur-lg border border-white/15 text-white shadow-sm">
                     <span className="material-symbols-outlined text-primary-fixed text-[18px]">chat_bubble</span>
-                    <span className="font-label-md text-label-md font-medium text-white">Your {activeSessions[0]?.class?.subject?.name} class is ready in {activeSessions[0]?.class?.classroom?.name}.</span>
+                    <span className="font-label-md text-label-md font-medium text-white">Your {activeSessions[0]?.class?.section?.course?.name} class is ready in {activeSessions[0]?.class?.classroom?.name}.</span>
                   </div>
                   <div className="flex items-center gap-space-md pt-1">
                     <div className="flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-lowest/15 backdrop-blur-md text-white font-label-md">
@@ -120,7 +135,7 @@ const StudentDashboard = () => {
                   
                   <div className="mt-space-md flex items-start justify-between gap-space-md">
                     <div>
-                      <h2 className="font-headline-md text-headline-md text-on-surface">{activeSessions[0].class?.subject?.name} ({activeSessions[0].class?.section?.name})</h2>
+                      <h2 className="font-headline-md text-headline-md text-on-surface">{activeSessions[0].class?.section?.course?.name} ({activeSessions[0].class?.section?.name})</h2>
                     </div>
                     <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
                       <span className="material-symbols-outlined text-[28px]">shield</span>
@@ -270,53 +285,6 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* TODAY'S CLASSES */}
-        <section className="rounded-[20px] bg-surface-container-lowest shadow-[0_8px_32px_rgba(16,21,43,0.06)] p-space-xl" style={{ border: '1px solid #E5E7EF' }}>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-space-md gap-2" style={{ borderBottom: '1px solid #E5E7EF' }}>
-            <div>
-              <div className="flex items-center gap-space-sm">
-                <h2 className="font-headline-sm text-headline-sm text-on-surface">Enrolled Classes</h2>
-                <span className="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm font-semibold">{classes.length} Courses</span>
-              </div>
-            </div>
-            <Link to="/student/classes" className="text-primary font-title-md text-title-md flex items-center gap-1 hover:underline">
-              <span>Full Timetable</span>
-              <span className="material-symbols-outlined text-[18px]">calendar_month</span>
-            </Link>
-          </div>
-          
-          <div className="mt-space-lg space-y-space-md">
-            {classes.map((cls, index) => (
-              <div key={cls.id} className="p-space-lg rounded-2xl bg-surface-container-lowest flex flex-col md:flex-row md:items-center justify-between gap-space-md" style={{ border: '1px solid #E5E7EF' }}>
-                <div className="flex items-start gap-space-md">
-                  <div className="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container text-on-surface-variant font-bold">
-                    <span className="font-label-sm text-tertiary">PER</span>
-                    <span className="font-headline-sm text-headline-sm">{String(index + 1).padStart(2, '0')}</span>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-space-sm flex-wrap">
-                      <span className="font-title-md text-title-md text-on-surface">{cls.subject?.name}</span>
-                    </div>
-                    <div className="flex items-center gap-space-md text-tertiary font-body-md mt-1 flex-wrap">
-                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">pin_drop</span> {cls.classroom?.name}</span>
-                      <span>•</span>
-                      <span>{cls.section?.name}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-space-md">
-                  <Link to={`/student/classes/${cls.id}`} className="px-space-md py-2 rounded-xl bg-surface-container text-on-surface font-label-md hover:bg-surface-variant transition-colors">
-                    Syllabus &amp; Files
-                  </Link>
-                </div>
-              </div>
-            ))}
-            
-            {classes.length === 0 && (
-              <div className="p-12 text-center text-gray-500">No classes found.</div>
-            )}
-          </div>
-        </section>
       </div>
     </div>
   );

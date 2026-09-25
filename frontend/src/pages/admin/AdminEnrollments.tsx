@@ -66,7 +66,7 @@ export const AdminEnrollments = () => {
           <option value="">-- Select a Class --</option>
           {classes.map(c => (
             <option key={c.id} value={c.id}>
-              {c.subject.code} - {c.subject.name} (Sec: {c.section.name})
+              {c.section?.course?.code} - {c.section?.course?.name} (Sec: {c.section.name})
             </option>
           ))}
         </select>
