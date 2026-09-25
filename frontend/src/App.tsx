@@ -18,6 +18,7 @@ import StudentProfile from './pages/student/StudentProfile';
 import StudentDevice from './pages/student/StudentDevice';
 import StudentTimeline from './pages/student/StudentTimeline';
 import StudentAttendanceDetails from './pages/student/StudentAttendanceDetails';
+import BluetoothTest from './pages/student/BluetoothTest';
 
 // Faculty Pages
 import FacultyDashboard from './pages/faculty/FacultyDashboard';
@@ -66,6 +67,7 @@ function App() {
             <Route path="attendance/:id" element={<StudentAttendanceDetails />} />
             <Route path="profile" element={<StudentProfile />} />
             <Route path="device" element={<StudentDevice />} />
+            <Route path="bluetooth-test" element={<BluetoothTest />} />
           </Route>
 
           {/* Faculty Routes */}

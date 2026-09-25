@@ -20,6 +20,10 @@ const Login: React.FC = () => {
       
       if (user.role === 'FACULTY') {
         navigate('/faculty/dashboard');
+      } else if (user.role === 'STUDENT') {
+        navigate('/student/dashboard');
+      } else if (user.role === 'ADMIN') {
+        navigate('/admin/dashboard');
       } else {
         navigate('/');
       }

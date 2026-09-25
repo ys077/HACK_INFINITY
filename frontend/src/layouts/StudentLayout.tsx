@@ -18,6 +18,7 @@ const StudentLayout = () => {
     { name: 'Attendance', path: '/student/sessions', icon: 'verified' },
     { name: 'Reports', path: '/student/attendance', icon: 'insert_chart' },
     { name: 'Profile', path: '/student/profile', icon: 'person' },
+    { name: 'BLE Test (POC)', path: '/student/bluetooth-test', icon: 'bluetooth' },
   ];
 
   return (

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Continuous Presence Attendance</string>
+    <string name="title_activity_main">Continuous Presence Attendance</string>
+    <string name="package_name">com.basixera.continuousattendance</string>
+    <string name="custom_url_scheme">com.basixera.continuousattendance</string>
+</resources>
