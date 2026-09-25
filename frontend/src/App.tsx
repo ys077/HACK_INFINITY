@@ -8,6 +8,7 @@ import AdminLayout from './layouts/AdminLayout';
 
 // Common
 import Login from './pages/Login';
+import SsoCallback from './pages/SsoCallback';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -24,8 +25,10 @@ import StudentLiveSession from './pages/student/StudentLiveSession';
 import StudentAttendance from './pages/student/StudentAttendance';
 import StudentProfile from './pages/student/StudentProfile';
 import StudentDevice from './pages/student/StudentDevice';
+import StudentPasskeys from './pages/student/StudentPasskeys';
 import StudentTimeline from './pages/student/StudentTimeline';
 import StudentAttendanceDetails from './pages/student/StudentAttendanceDetails';
+import StudentFaceEnrollment from './pages/student/StudentFaceEnrollment';
 import BluetoothTest from './pages/student/BluetoothTest';
 
 // Faculty Pages
@@ -60,6 +63,7 @@ function App() {
         <Routes>
           {/* Public Route */}
           <Route path="/login" element={<Login />} />
+          <Route path="/sso-callback" element={<SsoCallback />} />
           
           {/* Default Redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />
@@ -85,6 +89,8 @@ function App() {
             <Route path="attendance/:id" element={<StudentAttendanceDetails />} />
             <Route path="profile" element={<StudentProfile />} />
             <Route path="device" element={<StudentDevice />} />
+            <Route path="passkeys" element={<StudentPasskeys />} />
+            <Route path="security/face" element={<StudentFaceEnrollment />} />
             <Route path="bluetooth-test" element={<BluetoothTest />} />
           </Route>
 

@@ -33,24 +33,33 @@ const StudentDevice = () => {
     setRegistering(true);
     setError(null);
     try {
-      // 1. Generate local keypair
+      // 1. Get Registration Challenge
+      const optionsRes = await api.post('/student/devices/register/options');
+      const challenge = optionsRes.data.data.challenge;
+
+      // 2. Generate local non-extractable keypair
       const keyPair = await CryptoUtils.generateKeyPair();
       
-      // 2. Export keys
+      // 3. Export public key only
       const publicKeySpki = await CryptoUtils.exportPublicKey(keyPair.publicKey);
-      const privateKeyPkcs8 = await CryptoUtils.exportPrivateKey(keyPair.privateKey);
       
-      // 3. Register with backend
-      // Provide a device name and the base64 public key
+      // 4. Sign Challenge with the non-extractable private key
+      const signature = await CryptoUtils.sign(keyPair.privateKey, challenge);
+
+      // 5. Register with backend (send public key and signature)
       const deviceInfo = window.navigator.userAgent;
-      const res = await api.post('/student/devices/register', {
+      const res = await api.post('/student/devices/register/verify', {
+        challenge,
+        publicKey: publicKeySpki,
+        signature,
         deviceName: `Browser (${deviceInfo.split(' ')[0]})`,
-        publicKey: publicKeySpki
+        browser: deviceInfo,
+        platform: 'WEB'
       });
       
       if (res.data.success) {
-        // 4. Save private key locally ONLY if successful registration
-        localStorage.setItem(`device_private_key_${res.data.data.id}`, privateKeyPkcs8);
+        // 6. Save private key to IndexedDB
+        await CryptoUtils.storePrivateKey(res.data.data.id, keyPair.privateKey);
         localStorage.setItem('active_device_id', res.data.data.id);
         setDevice(res.data.data);
       }
@@ -69,7 +78,7 @@ const StudentDevice = () => {
     setRevoking(true);
     try {
       await api.post(`/student/devices/${device.id}/revoke`);
-      localStorage.removeItem(`device_private_key_${device.id}`);
+      await CryptoUtils.deletePrivateKey(device.id);
       localStorage.removeItem('active_device_id');
       setDevice(null);
     } catch (err: any) {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { 
-  joinPresence, heartbeatPresence, leavePresence, rejoinPresence, 
+  joinPresence, secureJoinSession, heartbeatPresence, leavePresence, rejoinPresence, 
   getStudentStatus, getStudentTimeline,
   getFacultySessionPresence, getFacultyStudentTimeline
 } from '../controllers/presence.controller.js';
@@ -13,6 +13,7 @@ router.use(requireAuth);
 
 // Student Presence Mutators
 router.post('/join', requireRole('STUDENT'), joinPresence);
+router.post('/join/secure', requireRole('STUDENT'), secureJoinSession);
 router.post('/heartbeat', requireRole('STUDENT'), heartbeatPresence);
 router.post('/leave', requireRole('STUDENT'), leavePresence);
 router.post('/rejoin', requireRole('STUDENT'), rejoinPresence);

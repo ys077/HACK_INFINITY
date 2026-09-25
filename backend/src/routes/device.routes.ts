@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import { 
-  registerDevice, 
+  registerDeviceOptions, 
+  registerDeviceVerify,
   listDevices, 
   getDeviceDetails, 
   revokeDevice,
@@ -14,7 +15,8 @@ import { deviceVerificationLimiter } from '../middleware/rate-limit.middleware.j
 const router = Router();
 
 // --- STUDENT ROUTES ---
-router.post('/student/devices/register', requireAuth, requireRole('STUDENT'), registerDevice);
+router.post('/student/devices/register/options', requireAuth, requireRole('STUDENT'), registerDeviceOptions);
+router.post('/student/devices/register/verify', requireAuth, requireRole('STUDENT'), registerDeviceVerify);
 router.get('/student/devices', requireAuth, requireRole('STUDENT'), listDevices);
 router.get('/student/devices/:deviceId', requireAuth, requireRole('STUDENT'), getDeviceDetails);
 router.post('/student/devices/:deviceId/revoke', requireAuth, requireRole('STUDENT'), revokeDevice);

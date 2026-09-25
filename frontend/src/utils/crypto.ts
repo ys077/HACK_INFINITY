@@ -1,3 +1,17 @@
+const DB_NAME = 'PresenzaSecureStore';
+const STORE_NAME = 'DeviceKeys';
+
+function getDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore(STORE_NAME);
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 export const CryptoUtils = {
   async generateKeyPair(): Promise<CryptoKeyPair> {
     return window.crypto.subtle.generateKey(
@@ -7,7 +21,7 @@ export const CryptoUtils = {
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256"
       },
-      true, // extractable
+      false, // NOT extractable!
       ["sign", "verify"]
     );
   },
@@ -17,23 +31,37 @@ export const CryptoUtils = {
     return this.bufferToBase64(exported);
   },
 
-  async exportPrivateKey(key: CryptoKey): Promise<string> {
-    const exported = await window.crypto.subtle.exportKey("pkcs8", key);
-    return this.bufferToBase64(exported);
+  async storePrivateKey(deviceId: string, key: CryptoKey): Promise<void> {
+    const db = await getDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put(key, `device_private_key_${deviceId}`);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
   },
 
-  async importPrivateKey(base64: string): Promise<CryptoKey> {
-    const buffer = this.base64ToBuffer(base64);
-    return window.crypto.subtle.importKey(
-      "pkcs8",
-      buffer,
-      {
-        name: "RSASSA-PKCS1-v1_5",
-        hash: "SHA-256"
-      },
-      true,
-      ["sign"]
-    );
+  async getPrivateKey(deviceId: string): Promise<CryptoKey | null> {
+    const db = await getDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(`device_private_key_${deviceId}`);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  
+  async deletePrivateKey(deviceId: string): Promise<void> {
+    const db = await getDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.delete(`device_private_key_${deviceId}`);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
   },
 
   async sign(privateKey: CryptoKey, message: string): Promise<string> {

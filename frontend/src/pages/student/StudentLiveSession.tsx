@@ -1,13 +1,15 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import { startAuthentication } from '@simplewebauthn/browser';
 import api from '../../services/api';
 import { CryptoUtils } from '../../utils/crypto';
 import { cn } from '../../utils/cn';
 import { 
   CheckCircle, AlertTriangle, XCircle, Clock, 
-  Smartphone, Shield, Radio, ArrowLeft
+  Smartphone, Shield, Radio, ArrowLeft, Key, Camera
 } from 'lucide-react';
+import { FaceLivenessCamera } from '../../components/FaceLivenessCamera';
 
 const StudentLiveSession = () => {
   const params = useParams();
@@ -22,6 +24,11 @@ const StudentLiveSession = () => {
   const [error, setError] = useState<string | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
   const [verifiedSeconds, setVerifiedSeconds] = useState(0);
+  const [joinStep, setJoinStep] = useState<'IDLE' | 'STEP_UP' | 'VERIFIED' | 'CAMERA'>('IDLE');
+  const [stepUpSessionId, setStepUpSessionId] = useState<string | null>(null);
+  const [joinChallengeId, setJoinChallengeId] = useState<string | null>(null);
+  const [livenessAttemptId, setLivenessAttemptId] = useState<string | null>(null);
+  const [challengeSequence, setChallengeSequence] = useState<string[] | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
 
@@ -120,7 +127,38 @@ const StudentLiveSession = () => {
     };
   }, [sessionId, navigate]);
 
-  const handleJoin = async () => {
+  const handleStepUpAuth = async () => {
+    setVerifying(true);
+    setError(null);
+    try {
+      const optionsRes = await api.post('/auth/passkey/auth/options');
+      const options = optionsRes.data.options;
+
+      const authResp = await startAuthentication({ optionsJSON: options });
+
+      const verifyRes = await api.post('/auth/passkey/auth/verify', {
+        data: authResp,
+        challengeRequestId: options.challenge
+      });
+
+      if (verifyRes.data.verified) {
+        setStepUpSessionId(verifyRes.data.stepUpSessionId);
+        await continueToSecureJoin(verifyRes.data.stepUpSessionId);
+      }
+    } catch (err: any) {
+      console.error("Passkey auth failed", err);
+      if (err.name === 'NotAllowedError') {
+        setError('Passkey authentication was cancelled by the user.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Passkey authentication failed.');
+      }
+      setJoinStep('IDLE');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const continueToSecureJoin = async (stepUpId: string) => {
     if (!device) {
       setError("No registered device found. Please register a device first.");
       return;
@@ -129,15 +167,15 @@ const StudentLiveSession = () => {
     setVerifying(true);
     setError(null);
     try {
-      const privateKeyStr = localStorage.getItem(`device_private_key_${device.id}`);
-      if (!privateKeyStr) {
+      const privateKey = await CryptoUtils.getPrivateKey(device.id);
+      if (!privateKey) {
         throw new Error("Local private key not found. Please re-register your device.");
       }
 
-      const isRejoin = presenceState?.status === 'TIMEOUT' || presenceState?.status === 'LEFT';
-      const purpose = isRejoin ? 'PRESENCE_REJOIN' : 'PRESENCE_JOIN';
+      // Rejoin policy requires full Secure Join if TIMEOUT, so purpose is PRESENCE_JOIN
+      const purpose = 'PRESENCE_JOIN';
 
-      // 1. Request Challenge
+      // 1. Request Device Challenge
       const challengeRes = await api.post('/device/challenge', {
         deviceId: device.id,
         sessionId,
@@ -145,31 +183,109 @@ const StudentLiveSession = () => {
       });
       const { challengeId, challenge, canonicalPayload } = challengeRes.data.data;
 
-      // 2. Sign Challenge
-      const privateKey = await CryptoUtils.importPrivateKey(privateKeyStr);
+      // 2. Sign Device Challenge
       const signature = await CryptoUtils.sign(privateKey, canonicalPayload);
 
-      // 3. Verify Challenge
+      // 3. Verify Device Challenge
       await api.post('/device/verify', {
         challengeId,
         signature
       });
 
-      // 4. Join / Rejoin
-      if (isRejoin) {
-        await api.post('/presence/rejoin', { sessionId, deviceId: device.id });
-      } else {
-        await api.post('/presence/join', { sessionId, deviceId: device.id });
-      }
-
-      await fetchState();
+      // 4. Start Face Verification
+      const faceRes = await api.post('/face/verification/start', { sessionId, deviceId: device.id });
+      setJoinChallengeId(faceRes.data.data.joinChallengeId);
+      setLivenessAttemptId(faceRes.data.data.livenessAttemptId);
+      setChallengeSequence(faceRes.data.data.challengeSequence);
+      
+      setJoinStep('CAMERA');
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || err.message || "Failed to verify device and join.");
+      setError(err.response?.data?.message || err.message || "Failed to verify device or start face verification.");
+      setJoinStep('IDLE');
     } finally {
       setVerifying(false);
     }
   };
+
+  const handleFaceSuccess = async (embedding: number[], observedActions: string[], actionTimestamps: number[]) => {
+    setVerifying(true);
+    try {
+      // 1. Verify Face & Liveness Evidence
+      await api.post('/face/verification/verify', {
+        joinChallengeId,
+        livenessAttemptId,
+        template: embedding,
+        observedActions,
+        actionTimestamps
+      });
+
+      // 2. Final Atomic Secure Join
+      await api.post('/join/secure', {
+        sessionId,
+        deviceId: device.id,
+        stepUpSessionId,
+        joinChallengeId
+      });
+
+      setJoinStep('IDLE');
+      await fetchState();
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || err.message || "Secure Join failed.");
+      setJoinStep('IDLE');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    const sendHeartbeat = async () => {
+      if (!device || !sessionId || (presenceState?.status !== 'PRESENT' && presenceState?.status !== 'GRACE')) return;
+      
+      try {
+        const privateKey = await CryptoUtils.getPrivateKey(device.id);
+        if (!privateKey) return;
+
+        // 1. Request Challenge
+        const challengeRes = await api.post('/device/challenge', {
+          deviceId: device.id,
+          sessionId,
+          purpose: 'PRESENCE_HEARTBEAT'
+        });
+        const { challengeId, canonicalPayload } = challengeRes.data.data;
+
+        // 2. Sign Challenge
+        const signature = await CryptoUtils.sign(privateKey, canonicalPayload);
+
+        // 3. Verify Challenge
+        await api.post('/device/verify', {
+          challengeId,
+          signature
+        });
+
+        // 4. Send Heartbeat
+        await api.post('/presence/heartbeat', {
+          sessionId,
+          deviceId: device.id
+        });
+        
+        // Let the socket event update the state or silently succeed
+      } catch (err) {
+        console.error("Heartbeat failed", err);
+      }
+    };
+
+    if (presenceState?.status === 'PRESENT' || presenceState?.status === 'GRACE') {
+      intervalId = setInterval(sendHeartbeat, 15000); // 15 seconds
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [sessionId, device, presenceState?.status]);
 
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading live session...</div>;
   if (!sessionId || !session) return (
@@ -192,8 +308,52 @@ const StudentLiveSession = () => {
       return (
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center animate-pulse">
           <Shield className="w-12 h-12 text-blue-500 mx-auto mb-3" />
-          <h2 className="text-xl font-bold text-blue-700">Verifying Device...</h2>
-          <p className="text-blue-600 mt-2">Performing cryptographic challenge-response.</p>
+          <h2 className="text-xl font-bold text-blue-700">Verifying Identity...</h2>
+          <p className="text-blue-600 mt-2">Performing secure step-up authentication.</p>
+        </div>
+      );
+    }
+
+    if (joinStep === 'STEP_UP') {
+      return (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center shadow-sm">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Shield className="w-8 h-8 text-blue-600" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800">Verify it's you</h2>
+          <p className="text-gray-500 font-medium mt-2">Use your passkey to complete secure step-up authentication.</p>
+          
+          <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col items-center gap-4">
+            <button 
+              onClick={handleStepUpAuth}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-sm transition-colors flex items-center gap-2"
+            >
+              <Key className="w-5 h-5" />
+              Use Passkey
+            </button>
+            <button 
+              onClick={() => setJoinStep('IDLE')}
+              className="text-gray-500 text-sm font-medium hover:text-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (joinStep === 'CAMERA') {
+      return (
+        <div className="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-sm">
+          <Camera className="w-12 h-12 text-blue-500 mx-auto mb-3" />
+          <h2 className="text-xl font-bold text-gray-800">Verify Your Identity</h2>
+          <p className="text-gray-500 mb-6">Complete the liveness challenge to join the session.</p>
+          <FaceLivenessCamera 
+            mode="verification"
+            challengeSequence={challengeSequence || []}
+            onSuccess={handleFaceSuccess}
+            onFailure={(msg) => { setError(msg); setJoinStep('IDLE'); }}
+          />
         </div>
       );
     }
@@ -248,7 +408,7 @@ const StudentLiveSession = () => {
             
             <div className="mt-8 pt-6 border-t border-red-200 flex flex-col items-center gap-4">
                <button 
-                onClick={handleJoin}
+                onClick={() => setJoinStep('STEP_UP')}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm transition-colors flex items-center gap-2"
               >
                 <Shield className="w-5 h-5" />
@@ -269,7 +429,7 @@ const StudentLiveSession = () => {
             
             <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col items-center gap-4">
               <button 
-                onClick={handleJoin}
+                onClick={() => setJoinStep('STEP_UP')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-sm transition-colors flex items-center gap-2"
               >
                 <Shield className="w-5 h-5" />

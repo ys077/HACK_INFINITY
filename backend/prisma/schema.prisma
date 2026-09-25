@@ -19,6 +19,12 @@ enum UserStatus {
   SUSPENDED
 }
 
+enum IdentityProvider {
+  GOOGLE
+  MICROSOFT
+  LOCAL
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -32,6 +38,68 @@ model User {
   faculty      Faculty?
   admin        Admin?
   auditLogs    AuditLog[]
+  identities   UserIdentity[]
+  passkeys     PasskeyCredential[]
+  stepUpSessions StepUpSession[]
+}
+
+model UserIdentity {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          IdentityProvider
+  providerSubjectId String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([provider, providerSubjectId])
+}
+
+enum CredentialStatus {
+  ACTIVE
+  REVOKED
+}
+
+model PasskeyCredential {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialId   String   @unique
+  publicKey      Bytes
+  counter        BigInt
+  transports     String?
+  deviceType     String   @default("singleDevice")
+  backedUp       Boolean  @default(false)
+  status         CredentialStatus @default(ACTIVE)
+  createdAt      DateTime @default(now())
+  lastUsedAt     DateTime?
+  revokedAt      DateTime?
+}
+
+model WebAuthnChallenge {
+  id             String   @id @default(uuid())
+  challenge      String   @unique
+  userId         String
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+}
+
+enum StepUpStatus {
+  CREATED
+  VERIFIED
+  CONSUMED
+  EXPIRED
+}
+
+model StepUpSession {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose        String
+  status         StepUpStatus @default(CREATED)
+  expiresAt      DateTime
+  consumedAt     DateTime?
+  createdAt      DateTime @default(now())
 }
 
 model Student {
@@ -53,6 +121,8 @@ model Student {
   presenceEvents PresenceEvent[]
   attendanceRecords AttendanceRecord[]
   attendanceConflicts AttendanceConflict[]
+  faceEnrollment FaceEnrollment?
+  joinChallenges JoinChallenge[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -210,11 +280,14 @@ model StudentDevice {
   studentId       String
   student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   devicePublicKey String   @unique
+  deviceFingerprint String? @unique
   deviceName      String?
   platform        DevicePlatform @default(OTHER)
+  browser         String?
   status          DeviceStatus @default(ACTIVE)
   registeredAt    DateTime @default(now())
   lastSeenAt      DateTime?
+  revokedAt       DateTime?
 
   challenges      DeviceChallenge[]
 
@@ -245,6 +318,7 @@ model AttendanceSession {
   attendanceRecords AttendanceRecord[]
   attendanceConflicts AttendanceConflict[]
   deviceChallenges DeviceChallenge[]
+  joinChallenges  JoinChallenge[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -363,4 +437,72 @@ model DeviceChallenge {
   usedAt      DateTime?
   
   createdAt   DateTime @default(now())
+}
+
+model FaceEnrollment {
+  id                String   @id @default(uuid())
+  studentId         String   @unique
+  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  template          Json
+  templateVersion   String
+  provider          String
+  providerReference String?
+  consentVersion    String?
+  status            String   @default("ACTIVE")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  revokedAt         DateTime?
+}
+
+enum ChallengeStatus {
+  CREATED
+  VERIFICATION_IN_PROGRESS
+  PASSED
+  FAILED
+  EXPIRED
+  CONSUMED
+}
+
+model JoinChallenge {
+  id              String   @id @default(uuid())
+  sessionId       String
+  session         AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  nonce           String   @unique
+  status          ChallengeStatus @default(CREATED)
+  expiresAt       DateTime
+  consumedAt      DateTime?
+  
+  livenessAttempts LivenessAttempt[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum LivenessAttemptStatus {
+  STARTED
+  PASSED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+model LivenessAttempt {
+  id              String   @id @default(uuid())
+  joinChallengeId String
+  joinChallenge   JoinChallenge @relation(fields: [joinChallengeId], references: [id], onDelete: Cascade)
+  challengeType   String
+  challengeSequence Json?
+  attemptNumber   Int      @default(1)
+  status          LivenessAttemptStatus @default(STARTED)
+  confidenceScore Float?
+  provider        String?
+  failureReason   String?
+  metadata        Json?
+  
+  startedAt       DateTime @default(now())
+  expiresAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
 }

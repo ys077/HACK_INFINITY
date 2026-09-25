@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const FacultyLiveSession = () => {
-  const { sessionId } = useParams();
+  const { id: sessionId } = useParams();
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
   const [attendance, setAttendance] = useState<any[]>([]);

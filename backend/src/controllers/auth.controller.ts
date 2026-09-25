@@ -5,6 +5,13 @@ import { verifyPassword } from '../utils/password.js';
 import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import { AuditService } from '../services/audit.service.js';
+import { OAuth2Client } from 'google-auth-library';
+
+const googleClient = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URI
+);
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -188,5 +195,82 @@ export const getMe = async (req: AuthenticatedRequest, res: Response): Promise<v
   } catch (error) {
     console.error('Get me error:', error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+export const googleOidcStart = async (req: Request, res: Response): Promise<void> => {
+  const url = googleClient.generateAuthUrl({
+    access_type: 'offline',
+    scope: ['openid', 'email', 'profile'],
+    prompt: 'consent'
+  });
+  res.json({ success: true, url });
+};
+
+export const googleOidcCallback = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { code } = req.query;
+    if (!code || typeof code !== 'string') {
+      res.redirect(`${process.env.APP_BASE_URL}/login?error=Invalid_OIDC_Callback`);
+      return;
+    }
+    const { tokens } = await googleClient.getToken(code);
+    const ticket = await googleClient.verifyIdToken({
+      idToken: tokens.id_token!,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+    const payload = ticket.getPayload();
+    if (!payload) throw new Error('No payload in id_token');
+    
+    const { sub, email } = payload;
+    
+    // Check if UserIdentity exists
+    let identity = await prisma.userIdentity.findUnique({
+      where: { provider_providerSubjectId: { provider: 'GOOGLE', providerSubjectId: sub } },
+      include: { user: true }
+    });
+    
+    let user = identity?.user || null;
+    
+    if (!user && email) {
+      // Find by email to link
+      user = await prisma.user.findUnique({ where: { email } });
+      if (user) {
+        await prisma.userIdentity.create({
+          data: {
+            userId: user.id,
+            provider: 'GOOGLE',
+            providerSubjectId: sub
+          }
+        });
+      }
+    }
+    
+    if (!user) {
+      res.redirect(`${process.env.APP_BASE_URL}/login?error=Account_Not_Found`);
+      return;
+    }
+    
+    if (user.status !== 'ACTIVE') {
+      res.redirect(`${process.env.APP_BASE_URL}/login?error=Account_Inactive`);
+      return;
+    }
+    
+    const jwtPayload = { sub: user.id, role: user.role };
+    const accessToken = generateAccessToken(jwtPayload);
+    const refreshToken = generateRefreshToken(jwtPayload);
+    
+    await AuditService.createAuditLog({
+      actorId: user.id,
+      action: 'SSO_LOGIN',
+      entityType: 'User',
+      entityId: user.id,
+      metadata: { provider: 'GOOGLE', subject: sub }
+    });
+    
+    res.redirect(`${process.env.APP_BASE_URL}/sso-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`);
+  } catch (err) {
+    console.error('OIDC error:', err);
+    res.redirect(`${process.env.APP_BASE_URL}/login?error=OIDC_Verification_Failed`);
   }
 };

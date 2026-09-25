@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
+const allowedDomain = process.env.ALLOWED_EMAIL_DOMAIN || '@gmail.com';
+
 export const studentCreateSchema = z.object({
-  email: z.string().email().endsWith('@gmail.com', { message: 'Only @gmail.com addresses are allowed' }),
+  email: z.string().email().refine(val => val.endsWith(allowedDomain), { message: `Only ${allowedDomain} addresses are allowed` }),
   password: z.string().min(8),
   studentId: z.string().min(1),
   name: z.string().min(1),

@@ -4,7 +4,7 @@ import api from '../../services/api';
 import { BookOpen, Users, MapPin, Clock, ArrowLeft, Radio } from 'lucide-react';
 
 const StudentClassDetails = () => {
-  const { classId } = useParams();
+  const { id: classId } = useParams();
   const [cls, setCls] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

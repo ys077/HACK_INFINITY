@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, LogOut, BookOpen, Radio, Clock, User, Bluetooth } from 'lucide-react';
+import { LayoutDashboard, LogOut, BookOpen, Radio, Clock, User, Bluetooth, Key } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 const StudentLayout = () => {
@@ -18,6 +18,7 @@ const StudentLayout = () => {
     { label: 'Live Sessions', path: '/student/sessions', icon: Radio },
     { label: 'History', path: '/student/attendance', icon: Clock },
     { label: 'Profile', path: '/student/profile', icon: User },
+    { label: 'Security', path: '/student/passkeys', icon: Key },
     { label: 'BLE Test (POC)', path: '/student/bluetooth-test', icon: Bluetooth },
   ];
 

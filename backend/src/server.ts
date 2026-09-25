@@ -28,6 +28,7 @@ import conflictRoutes from './routes/conflict.routes.js';
 import deviceRoutes from './routes/device.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import auditRoutes from './routes/audit.routes.js';
+import faceRoutes from './routes/face.routes.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -75,6 +76,7 @@ app.use('/api', conflictRoutes);
 app.use('/api', deviceRoutes);
 app.use('/api', analyticsRoutes);
 app.use('/api', auditRoutes);
+app.use('/api/face', faceRoutes);
 
 
 // Error handling middleware

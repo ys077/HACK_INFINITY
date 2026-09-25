@@ -4,7 +4,7 @@ import api from '../../services/api';
 import { Play, Users, BookOpen } from 'lucide-react';
 
 const FacultyClassDetails = () => {
-  const { classId } = useParams();
+  const { id: classId } = useParams();
   const navigate = useNavigate();
   const [cls, setCls] = useState<any>(null);
   const [loading, setLoading] = useState(true);

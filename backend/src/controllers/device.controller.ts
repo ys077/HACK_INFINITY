@@ -11,15 +11,50 @@ const registerDeviceSchema = z.object({
   deviceName: z.string().max(100).optional()
 });
 
-export const registerDevice = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+import crypto from 'crypto';
+
+export const registerDeviceOptions = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const parsed = registerDeviceSchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ success: false, message: 'Invalid request data' });
+    const student = await prisma.student.findUnique({ where: { userId: req.user!.id } });
+    if (!student) {
+      res.status(403).json({ success: false, message: 'STUDENT_PROFILE_REQUIRED' });
       return;
     }
 
-    const { publicKey, deviceName } = parsed.data;
+    const challenge = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await prisma.webAuthnChallenge.create({
+      data: {
+        userId: req.user!.id,
+        challenge,
+        expiresAt
+      }
+    });
+
+    res.json({ success: true, data: { challenge } });
+  } catch (error) {
+    console.error('registerDeviceOptions Error:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+export const registerDeviceVerify = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { challenge, publicKey, signature, deviceName, browser, platform } = req.body;
+
+    const challengeObj = await prisma.webAuthnChallenge.findFirst({
+      where: {
+        challenge,
+        userId: req.user!.id,
+        expiresAt: { gt: new Date() }
+      }
+    });
+
+    if (!challengeObj) {
+      res.status(400).json({ success: false, message: 'Challenge expired or not found' });
+      return;
+    }
 
     const student = await prisma.student.findUnique({ where: { userId: req.user!.id } });
     if (!student) {
@@ -27,14 +62,36 @@ export const registerDevice = async (req: AuthenticatedRequest, res: Response): 
       return;
     }
 
+    // Verify signature to prove possession of private key
+    // The client signs the challenge using their new private key.
+    const cryptoNode = await import('crypto');
+    const verify = cryptoNode.createVerify('SHA256');
+    verify.update(challenge);
+    const isVerified = verify.verify(publicKey, signature, 'base64');
+
+    if (!isVerified) {
+      res.status(400).json({ success: false, message: 'Invalid device signature' });
+      return;
+    }
+
+    // Register device
     const device = await DeviceService.registerDevice(student.id, publicKey, deviceName);
+    
+    // Update additional fields (browser, platform, fingerprint)
+    const fingerprint = generateFingerprint(publicKey);
+    await prisma.studentDevice.update({
+      where: { id: device.id },
+      data: { browser, platform, deviceFingerprint: fingerprint }
+    });
+
+    await prisma.webAuthnChallenge.delete({ where: { challenge } });
 
     await AuditService.createAuditLog({
       actorId: req.user!.id,
       action: 'DEVICE_REGISTERED',
       entityType: 'StudentDevice',
       entityId: device.id,
-      metadata: { deviceName: device.deviceName, fingerprint: generateFingerprint(device.devicePublicKey) }
+      metadata: { deviceName: device.deviceName, fingerprint }
     });
 
     res.status(201).json({
@@ -43,7 +100,7 @@ export const registerDevice = async (req: AuthenticatedRequest, res: Response): 
         id: device.id,
         deviceName: device.deviceName,
         status: device.status,
-        fingerprint: generateFingerprint(device.devicePublicKey),
+        fingerprint,
         createdAt: device.createdAt
       }
     });
@@ -52,11 +109,13 @@ export const registerDevice = async (req: AuthenticatedRequest, res: Response): 
     if (['INVALID_PUBLIC_KEY', 'DEVICE_ALREADY_REGISTERED', 'DEVICE_ALREADY_ACTIVE', 'DEVICE_REVOKED'].includes(msg)) {
       res.status(400).json({ success: false, message: msg });
     } else {
-      console.error('registerDevice Error:', error);
+      console.error('registerDeviceVerify Error:', error);
       res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
   }
 };
+
+
 
 export const listDevices = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
