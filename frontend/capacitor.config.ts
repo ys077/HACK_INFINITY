@@ -5,7 +5,13 @@ const config: CapacitorConfig = {
   appName: 'Presenza',
   webDir: 'dist',
   server: {
+    androidScheme: 'http',
     cleartext: true
+  },
+  plugins: {
+    CapacitorHttp: {
+      enabled: true
+    }
   }
 };
 
