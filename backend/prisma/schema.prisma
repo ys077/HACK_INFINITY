@@ -64,6 +64,7 @@ model Faculty {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   employeeId   String   @unique
   name         String
+  phone        String?
   departmentId String
   department   Department @relation(fields: [departmentId], references: [id])
   
@@ -170,6 +171,8 @@ model Classroom {
   floor        String
   roomNumber   String
   status       RoomStatus @default(AVAILABLE)
+  /// Future BLE beacon identifier for the classroom. Presence is never granted from this field alone.
+  bleBeaconId  String?
 
   classes      Class[]
 
@@ -222,6 +225,8 @@ model StudentDevice {
   registeredAt    DateTime @default(now())
   lastSeenAt      DateTime?
 
+  challenges      DeviceChallenge[]
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -248,6 +253,7 @@ model AttendanceSession {
   presenceEvents  PresenceEvent[]
   attendanceRecords AttendanceRecord[]
   attendanceConflicts AttendanceConflict[]
+  deviceChallenges DeviceChallenge[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -346,4 +352,24 @@ model AuditLog {
   eventHash       String?
 
   createdAt       DateTime @default(now())
+}
+
+enum ChallengePurpose {
+  PRESENCE_JOIN
+  PRESENCE_REJOIN
+  PRESENCE_HEARTBEAT
+}
+
+model DeviceChallenge {
+  id          String   @id @default(uuid())
+  challenge   String   @unique
+  deviceId    String
+  device      StudentDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  sessionId   String
+  session     AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  purpose     ChallengePurpose
+  expiresAt   DateTime
+  usedAt      DateTime?
+  
+  createdAt   DateTime @default(now())
 }

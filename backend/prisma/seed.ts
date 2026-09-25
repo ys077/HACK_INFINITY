@@ -9,6 +9,7 @@ async function main() {
   const passwordHash = await bcrypt.hash(defaultPassword, salt)
 
   // Clear the database first to ensure fresh seed
+  await prisma.deviceChallenge.deleteMany()
   await prisma.auditLog.deleteMany()
   await prisma.attendanceConflict.deleteMany()
   await prisma.attendanceRecord.deleteMany()

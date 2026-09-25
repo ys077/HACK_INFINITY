@@ -1,37 +1,90 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+
+// Layouts
+import StudentLayout from './layouts/StudentLayout';
+import FacultyLayout from './layouts/FacultyLayout';
+
+// Common
+import Login from './pages/Login';
+
+// Student Pages
+import StudentDashboard from './pages/student/StudentDashboard';
+import StudentClasses from './pages/student/StudentClasses';
+import StudentClassDetails from './pages/student/StudentClassDetails';
+import StudentLiveSession from './pages/student/StudentLiveSession';
+import StudentAttendance from './pages/student/StudentAttendance';
+import StudentProfile from './pages/student/StudentProfile';
+import StudentDevice from './pages/student/StudentDevice';
+import StudentTimeline from './pages/student/StudentTimeline';
+import StudentAttendanceDetails from './pages/student/StudentAttendanceDetails';
+
+// Faculty Pages
+import FacultyDashboard from './pages/faculty/FacultyDashboard';
+import FacultyClasses from './pages/faculty/FacultyClasses';
+import FacultyClassDetails from './pages/faculty/FacultyClassDetails';
+import FacultyStartSession from './pages/faculty/FacultyStartSession';
+import FacultyLiveSession from './pages/faculty/FacultyLiveSession';
+import FacultyStudents from './pages/faculty/FacultyStudents';
+import FacultyStudentPresence from './pages/faculty/FacultyStudentPresence';
+import FacultyConflicts from './pages/faculty/FacultyConflicts';
+import FacultyAttendanceHistory from './pages/faculty/FacultyAttendanceHistory';
+import FacultyClassAnalytics from './pages/faculty/FacultyClassAnalytics';
+import FacultyReports from './pages/faculty/FacultyReports';
+
 import './App.css';
 
+const ProtectedRoute = ({ children, role }: { children: React.ReactNode, role: 'STUDENT' | 'FACULTY' }) => {
+  const { isAuthenticated, user } = useAuth();
+  
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (user?.role !== role) return <Navigate to="/login" replace />;
+  
+  return <>{children}</>;
+};
+
 function App() {
-  const [health, setHealth] = useState<any>(null);
-
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/health')
-      .then(response => {
-        setHealth(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching health:', error);
-      });
-  }, []);
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-4xl font-bold text-blue-600 mb-4">Continuous Classroom Presence Attendance System</h1>
-      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-2">Backend Health Check</h2>
-        {health ? (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-            <p><strong>Status:</strong> {health.status}</p>
-            <p><strong>Service:</strong> {health.service}</p>
-          </div>
-        ) : (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-            Checking backend health... Make sure backend is running on port 5000.
-          </div>
-        )}
-      </div>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          {/* Public Route */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Default Redirect */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
+          {/* Student Routes */}
+          <Route path="/student" element={<ProtectedRoute role="STUDENT"><StudentLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<StudentDashboard />} />
+            <Route path="classes" element={<StudentClasses />} />
+            <Route path="classes/:id" element={<StudentClassDetails />} />
+            <Route path="sessions" element={<StudentLiveSession />} />
+            <Route path="sessions/:id" element={<StudentLiveSession />} />
+            <Route path="sessions/:id/timeline" element={<StudentTimeline />} />
+            <Route path="attendance" element={<StudentAttendance />} />
+            <Route path="attendance/:id" element={<StudentAttendanceDetails />} />
+            <Route path="profile" element={<StudentProfile />} />
+            <Route path="device" element={<StudentDevice />} />
+          </Route>
+
+          {/* Faculty Routes */}
+          <Route path="/faculty" element={<ProtectedRoute role="FACULTY"><FacultyLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<FacultyDashboard />} />
+            <Route path="classes" element={<FacultyClasses />} />
+            <Route path="classes/:id" element={<FacultyClassDetails />} />
+            <Route path="sessions/start" element={<FacultyStartSession />} />
+            <Route path="sessions/:id" element={<FacultyLiveSession />} />
+            <Route path="sessions/:id/students" element={<FacultyStudents />} />
+            <Route path="sessions/:id/presence" element={<FacultyStudentPresence />} />
+            <Route path="conflicts" element={<FacultyConflicts />} />
+            <Route path="attendance/history" element={<FacultyAttendanceHistory />} />
+            <Route path="analytics" element={<FacultyClassAnalytics />} />
+            <Route path="reports" element={<FacultyReports />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -10,13 +10,13 @@ export interface JwtPayload {
 export function generateAccessToken(payload: { sub: string; role: string }): string {
   const secret = process.env.JWT_ACCESS_SECRET || 'fallback_access_secret';
   const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN || '15m';
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, secret, { expiresIn: expiresIn as any });
 }
 
 export function generateRefreshToken(payload: { sub: string; role: string }): string {
   const secret = process.env.JWT_REFRESH_SECRET || 'fallback_refresh_secret';
   const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, secret, { expiresIn: expiresIn as any });
 }
 
 export function verifyAccessToken(token: string): JwtPayload {

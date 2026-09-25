@@ -15,13 +15,13 @@ describe('Enrollment Management Module Tests', () => {
     const resAdmin = await request(app).post('/api/auth/login').send({ email: 'admin@presenza.edu', password: 'password123' });
     adminToken = resAdmin.body.data.accessToken;
 
-    const resStudent = await request(app).post('/api/auth/login').send({ email: 'student1@presenza.edu', password: 'password123' });
+    const resStudent = await request(app).post('/api/auth/login').send({ email: 'student3@presenza.edu', password: 'password123' });
     studentToken = resStudent.body.data.accessToken;
 
-    const student = await prisma.student.findFirst({ where: { user: { email: 'student1@presenza.edu' } } });
+    const student = await prisma.student.findFirst({ where: { user: { email: 'student3@presenza.edu' } } });
     studentId = student!.id;
 
-    const anotherStudent = await prisma.student.findFirst({ where: { user: { email: 'student2@presenza.edu' } } });
+    const anotherStudent = await prisma.student.findFirst({ where: { user: { email: 'student4@presenza.edu' } } });
     anotherStudentId = anotherStudent!.id;
 
     // Remove existing enrollments for student1 to start fresh for our tests

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error": "#ffffff", "outline-variant": "#c7c4d7", "surface-container-high": "#e5e6ff", "surface-bright": "#fbf8ff", "background": "#fbf8ff", "primary-container": "#5b5ce2", "on-secondary": "#ffffff", "primary-fixed": "#e1dfff", "secondary-container": "#9d9fff", "error-container": "#ffdad6", "surface-variant": "#dfe1f9", "surface": "#fbf8ff", "on-primary-container": "#f2efff", "inverse-on-surface": "#f0efff", "surface-container-lowest": "#ffffff", "tertiary": "#4f546e", "on-tertiary-fixed-variant": "#41455f", "tertiary-fixed": "#dde1ff", "on-primary-fixed-variant": "#322fba", "tertiary-fixed-dim": "#c1c5e4", "surface-tint": "#4b4bd2", "on-surface-variant": "#464554", "secondary": "#5354ae", "surface-container": "#ececff", "surface-dim": "#d7d8f0", "on-secondary-container": "#31318b", "inverse-primary": "#c1c1ff", "primary": "#4141c8", "inverse-surface": "#2c2f41", "outline": "#777586", "on-secondary-fixed-variant": "#3a3b95", "on-background": "#181a2c", "on-secondary-fixed": "#08016a", "error": "#ba1a1a", "surface-container-low": "#f4f2ff", "on-primary-fixed": "#08006b", "on-surface": "#181a2c", "on-tertiary-container": "#f0efff", "surface-container-highest": "#dfe1f9", "on-error-container": "#93000a", "on-tertiary-fixed": "#151a31", "secondary-fixed": "#e1dfff", "on-tertiary": "#ffffff", "tertiary-container": "#676c87", "on-primary": "#ffffff", "secondary-fixed-dim": "#c1c1ff", "primary-fixed-dim": "#c1c1ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1rem", "margin": "2rem", "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "gutter-mobile": "1rem", "gutter": "1.5rem", "space-xs": "0.25rem" }, "fontFamily": { "body-md": ["Inter"], "label-md": ["Inter"], "headline-lg-mobile": ["Inter"], "body-lg": ["Inter"], "label-sm": ["Inter"], "headline-lg": ["Inter"], "headline-md": ["Inter"], "title-md": ["Inter"], "display-mobile": ["Inter"], "display": ["Inter"], "headline-sm": ["Inter"] }, "fontSize": { "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[250px] bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center gap-space-sm bg-surface-container-lowest"><img alt="Brand logo. - Primary color: #5b5ce2
+- Font: inter
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WXgmGP-RK1oxMIl9-Phh_gc80k-a-WPovYqea8XkL2zKRvq8bCEm8d099166Zn-91LCckvcjjZmB8LnG19mIB9QGoZ2sgeCNUQmaV3sAs0UfHQIodUAMwJ1M3zI7WpgyNtL-SjOjhPMD28-l2RhXg3-ICnrJzmhyF4ink_krcyxgoS6Cmzatx7O8oCEOpgLGbV8vukBqQpGl14_MR8YjwntwI6AEzd-btKCJJ40iXWnfC--wqcmMACSfY"/><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md tracking-tight text-on-surface leading-none">PRESENZA</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate mt-0.5">Classroom Presence</span></div></div><div class="mx-space-md mt-space-sm mb-space-sm p-space-sm bg-surface-container-low rounded-lg"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-tertiary">Student View</span><button class="text-primary hover:text-on-primary-fixed-variant flex items-center transition-colors" type="button"><span class="material-symbols-outlined text-[14px]">swap_horiz</span></button></div><div class="font-label-md text-label-md text-on-surface truncate mt-1">Surya Dhananchezhiyan</div><div class="font-label-sm text-label-sm text-on-surface-variant font-mono">23CS101 • CSE-A</div></div><nav class="px-space-sm space-y-space-xs" data-active-classes="bg-surface-container text-primary font-title-md rounded-lg"><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm transition-colors bg-surface-container text-primary font-title-md rounded-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-md text-body-md">Home</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="my-classes" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-body-md text-body-md">My Classes</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="attendance" href="#"><span class="material-symbols-outlined text-[20px]">verified</span><span class="font-body-md text-body-md">Attendance</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="reports" href="#"><span class="material-symbols-outlined text-[20px]">insert_chart</span><span class="font-body-md text-body-md">Reports</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="profile" href="#"><span class="material-symbols-outlined text-[20px]">person</span><span class="font-body-md text-body-md">Profile</span></a></nav></div><div class="p-space-sm flex flex-col gap-space-sm"><div class="px-space-sm py-space-xs flex items-center justify-between bg-surface-container-low rounded-lg"><div class="flex items-center gap-space-xs"><span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-tertiary">Nodes Operational</span></div><span class="material-symbols-outlined text-[14px] text-tertiary">wifi_tethering</span></div><a class="flex items-center gap-space-sm px-space-md py-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="support" href="#"><span class="material-symbols-outlined text-[18px]">help_center</span><span class="font-label-md text-label-md">Help &amp; Support</span></a><div class="flex items-center gap-space-sm p-space-sm bg-surface-container-low rounded-lg"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-surface truncate">Surya D.</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">B.Tech CSE</span></div></div></div></aside><div class="pl-[250px] min-h-screen flex flex-col bg-surface"><header class="fixed top-0 left-[250px] right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-gutter flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-tertiary text-[18px]">search</span><input class="w-full pl-10 pr-space-md py-1.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder-tertiary focus:outline-none focus:bg-surface-container-lowest transition-colors" placeholder="Search courses, sessions, faculty, or rooms (⌘K)..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="hidden sm:flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-high"><span class="h-2 w-2 rounded-full bg-primary-container animate-ping"></span><span class="font-label-sm text-label-sm text-on-secondary-container font-semibold">Presence Active • CSE-204</span></div><button aria-label="Notifications" class="relative p-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-error"></span></button><button aria-label="Help" class="p-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">help_outline</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="flex-1 pt-16 w-full px-gutter py-space-lg bg-surface"><div class="flex flex-col w-full">
+<div class="w-full space-y-space-lg pb-space-xl">
+<!-- TAB VIEW CONTAINER: HOME -->
+<div class="tab-view flex flex-col space-y-space-lg" id="view-dashboard">
+<!-- HERO SECTION WITH FULL-BODY DIGITAL HUMAN (SEAMLESS COMPOSITING) -->
+<section class="relative w-full rounded-[24px] overflow-hidden shadow-xl" style="height: 450px; background: linear-gradient(135deg, #10152B 0%, #292F67 58%, #5B5CE2 100%);">
+<!-- Ambient radial glow behind companion -->
+<div class="absolute right-[14%] top-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full bg-primary-container/25 blur-3xl pointer-events-none"></div>
+<div class="relative z-10 w-full h-full flex flex-col md:flex-row items-stretch justify-between px-space-xl py-space-lg">
+<!-- Left Content Panel (52% width) -->
+<div class="w-full md:w-[54%] flex flex-col justify-between py-1 z-20">
+<div>
+<!-- Eyebrow Pill -->
+<div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-primary-fixed font-label-sm uppercase tracking-wider mb-space-md">
+<span class="material-symbols-outlined text-[14px]">school</span>
+<span>Welcome Back • Semester VI</span>
+</div>
+<!-- Main Title & Subtitle -->
+<h1 class="text-white font-headline-lg text-headline-lg tracking-tight">Good morning, Surya.</h1>
+<p class="font-headline-sm text-headline-sm text-indigo-100 font-semibold mt-1">Your classroom presence is ready.</p>
+<p class="font-body-md text-body-md text-indigo-100/80 mt-space-sm max-w-lg leading-relaxed">
+                Join your active class and PRESENZA will keep your attendance updated automatically throughout the lecture.
+              </p>
+</div>
+<!-- Speech bubble alert & Status confirmation -->
+<div class="space-y-space-sm mt-space-md">
+<div class="inline-flex items-center gap-space-sm px-space-md py-2 rounded-xl bg-white/10 backdrop-blur-lg border border-white/15 text-white shadow-sm">
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">chat_bubble</span>
+<span class="font-label-md text-label-md font-medium text-white">Your Cyber Security class is ready in Room CSE-204.</span>
+</div>
+<div class="flex items-center gap-space-md pt-1">
+<div class="flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-lowest/15 backdrop-blur-md text-white font-label-md">
+<span class="inline-block w-2 h-2 rounded-full bg-[#22C7A3] animate-pulse"></span>
+<span>System ready • Classroom ready</span>
+</div>
+<div class="hidden lg:flex items-center gap-1 font-label-sm text-indigo-200">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>Continuous Node Synced</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Content Panel: Seamless Full-body Digital Human (48% width) -->
+<div class="w-full md:w-[46%] relative h-full flex items-end justify-center pointer-events-none select-none">
+<!-- Ground Contact Shadow beneath shoes -->
+<div class="absolute bottom-1 w-52 h-4 rounded-full bg-black/45 blur-md"></div>
+<!-- Character State Badge -->
+<div class="absolute top-4 right-2 z-30 pointer-events-auto flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-lowest/20 backdrop-blur-md border border-white/20 text-white font-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-[#22C7A3]"></span>
+<span>Interactive Companion • Active Class Available</span>
+</div>
+<!-- Head-to-sneakers full character asset -->
+<img alt="PRESENZA Digital Student Companion Surya" class="relative z-10 max-h-[430px] w-auto object-contain drop-shadow-2xl" src="https://lh3.googleusercontent.com/aida/AEtjO1WcbNJhIMxwea07rSATSSOBbYnpzGHI1rEeQhCSYwPHNLH6cT-EOQuRAysh6i3Qg6g4doAcfGuQS2L7XMyB41KBx3fPb1hmopzTi_KhCHYH_7Ro8QeZiiZYVfBG_7OV28xz4RvZB4GFKvs18QdmpsUYIB3a6ZDv8mR7q7tuCq20tZK4ooTJ2gcG7xKM15HudEOiALZyNlcYIKe7ki5JqCGUDqXOCq7txARaMNGY-bIiUQCTUiIApj0gAKI" style="mix-blend-mode: normal;"/>
+</div>
+</div>
+</section>
+<!-- 2-COLUMN MAIN CONTENT GRID -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- LEFT COLUMN: DOMINANT "ACTIVE SESSION" CARD (7 COLS) -->
+<div class="lg:col-span-7 flex flex-col space-y-space-lg">
+<div class="rounded-[20px] bg-surface-container-lowest shadow-[0_8px_32px_rgba(16,21,43,0.06)] p-space-xl flex flex-col justify-between" style="border: 1px solid #E5E7EF;">
+<div>
+<!-- Card Top Header -->
+<div class="flex items-center justify-between pb-space-md" style="border-bottom: 1px solid #E5E7EF;">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-md text-label-md text-primary font-bold tracking-wider uppercase">Active Session</span>
+<span class="px-space-sm py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+                    LIVE NOW
+                  </span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary">Started 4 mins ago</span>
+</div>
+<!-- Main Course Details -->
+<div class="mt-space-md flex items-start justify-between gap-space-md">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Cyber Security (CSE-A)</h2>
+<p class="font-body-md text-body-md text-tertiary mt-1">Course Code: <span class="font-mono text-on-surface font-semibold">CS603</span> • Faculty: Dr. R. Kumar</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">shield</span>
+</div>
+</div>
+<!-- Venue and Time Strip -->
+<div class="mt-space-md grid grid-cols-2 gap-space-sm p-space-md rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">meeting_room</span>
+<div>
+<span class="block font-label-sm text-tertiary">Assigned Venue</span>
+<span class="font-title-md text-title-md text-on-surface">Room CSE-204</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+<div>
+<span class="block font-label-sm text-tertiary">Session Window</span>
+<span class="font-title-md text-title-md text-on-surface">10:00 AM – 11:00 AM</span>
+</div>
+</div>
+</div>
+<!-- Three Verification Pre-checks -->
+<div class="mt-space-lg space-y-space-sm">
+<span class="font-label-sm text-tertiary uppercase font-bold tracking-wide">Verification Pre-conditions</span>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+<div class="flex items-center gap-space-xs p-space-sm rounded-lg bg-surface">
+<span class="material-symbols-outlined text-[#0E8B70] text-[18px]">check_circle</span>
+<div class="min-w-0">
+<span class="block font-label-sm text-tertiary">Classroom</span>
+<span class="font-label-md text-on-surface truncate">In Room CSE-204</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs p-space-sm rounded-lg bg-surface">
+<span class="material-symbols-outlined text-[#0E8B70] text-[18px]">phonelink_ring</span>
+<div class="min-w-0">
+<span class="block font-label-sm text-tertiary">Registered Device</span>
+<span class="font-label-md text-on-surface truncate">iPhone 15 Pro</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs p-space-sm rounded-lg bg-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">sensors</span>
+<div class="min-w-0">
+<span class="block font-label-sm text-tertiary">Presence Sensor</span>
+<span class="font-label-md text-on-surface truncate">Ready to join</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Single Dominant Action Button -->
+<div class="mt-space-xl">
+<button class="w-full h-[54px] rounded-xl bg-primary-container text-white font-title-md text-title-md flex items-center justify-center gap-space-sm shadow-md hover:bg-[#4546b8] active:scale-[0.99] transition-all cursor-pointer" id="btn-join-session" type="button">
+<span>Join Session</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<p class="font-label-sm text-label-sm text-center text-tertiary mt-2">
+                Your continuous presence will begin after verification. No action needed once verified.
+              </p>
+</div>
+</div>
+<!-- REASSURING PRIVACY & INTEGRITY CARD -->
+<div class="rounded-[18px] bg-surface-container-lowest p-space-md flex items-center gap-space-md shadow-sm" style="border: 1px solid #E5E7EF;">
+<div class="w-10 h-10 rounded-full bg-[#22C7A3]/10 flex items-center justify-center text-[#0E8B70] flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-title-md text-title-md text-on-surface">Ambient &amp; Respectful Continuous Verification</h3>
+<p class="font-body-md text-body-md text-tertiary text-sm">PRESENZA maintains uninterrupted attendance logs without biometric cameras or personal location tracking outside assigned venues.</p>
+</div>
+<span class="material-symbols-outlined text-tertiary text-[20px]">lock</span>
+</div>
+</div>
+<!-- RIGHT COLUMN: COMPACT ATTENDANCE & DEVICE WIDGETS (5 COLS) -->
+<div class="lg:col-span-5 flex flex-col space-y-space-lg">
+<!-- My Attendance Radial Card -->
+<div class="rounded-[20px] bg-surface-container-lowest shadow-[0_8px_32px_rgba(16,21,43,0.06)] p-space-lg flex flex-col justify-between" style="border: 1px solid #E5E7EF;">
+<div class="flex items-center justify-between pb-space-sm" style="border-bottom: 1px solid #E5E7EF;">
+<span class="font-label-md text-label-md text-tertiary uppercase font-bold tracking-wider">My Attendance</span>
+<span class="font-label-sm text-primary font-semibold">Semester Target: 75%</span>
+</div>
+<div class="py-space-md flex items-center gap-space-lg">
+<!-- Radial SVG Gauge -->
+<div class="relative w-28 h-28 flex items-center justify-center flex-shrink-0">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<!-- Background Ring -->
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<!-- Progress Value: 87.4% -->
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="87.4, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-none">87.4%</span>
+<span class="font-label-sm text-label-sm text-tertiary mt-0.5">Aggregate</span>
+</div>
+</div>
+<!-- Metrics -->
+<div class="flex flex-col space-y-space-xs">
+<div class="inline-flex items-center gap-1 text-[#0E8B70] font-label-md font-semibold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+2.4% vs requirement</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface font-medium">42 of 48 sessions verified</p>
+<p class="font-label-sm text-label-sm text-tertiary">Zero unexcused absences recorded.</p>
+</div>
+</div>
+<div class="pt-space-sm" style="border-top: 1px solid #E5E7EF;">
+<button class="w-full py-2 flex items-center justify-between text-primary font-title-md text-title-md hover:text-on-primary-fixed-variant transition-colors" onclick="switchTab('attendance')" type="button">
+<span>View Attendance Ledger</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- My Device Card -->
+<div class="rounded-[20px] bg-surface-container-lowest shadow-[0_8px_32px_rgba(16,21,43,0.06)] p-space-lg" style="border: 1px solid #E5E7EF;">
+<div class="flex items-center justify-between pb-space-sm" style="border-bottom: 1px solid #E5E7EF;">
+<span class="font-label-md text-label-md text-tertiary uppercase font-bold tracking-wider">Registered Device</span>
+<span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#22C7A3]"></span>
+                Authorized
+              </span>
+</div>
+<div class="py-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">smartphone</span>
+</div>
+<div>
+<div class="font-title-md text-title-md text-on-surface">iPhone 15 Pro</div>
+<div class="font-label-sm text-tertiary font-mono">ID: PRES-DEV-9082-A</div>
+</div>
+</div>
+<div class="text-right">
+<span class="block font-label-sm text-tertiary">Last verified</span>
+<span class="font-label-md text-on-surface">2 min ago</span>
+</div>
+</div>
+<div class="pt-space-sm flex items-center justify-between" style="border-top: 1px solid #E5E7EF;">
+<div class="flex items-center gap-1 text-tertiary font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-[#0E8B70]">check</span>
+<span>Classroom BLE Tether Ready</span>
+</div>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container text-on-surface font-label-md hover:bg-surface-variant transition-colors cursor-pointer" onclick="alert('Device Management modal: iPhone 15 Pro is bonded to institutional profile 23CS101.')" type="button">
+                Manage Device
+              </button>
+</div>
+</div>
+</div>
+</div>
+<!-- TODAY'S CLASSES TIMELINE (CLEAN ACADEMIC WORKFLOW) -->
+<section class="rounded-[20px] bg-surface-container-lowest shadow-[0_8px_32px_rgba(16,21,43,0.06)] p-space-xl" style="border: 1px solid #E5E7EF;">
+<!-- Section Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-md gap-2" style="border-bottom: 1px solid #E5E7EF;">
+<div>
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Today's Classes</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm font-semibold">3 Sessions Scheduled</span>
+</div>
+<p class="font-label-md text-tertiary mt-0.5">Wednesday, March 25, 2026 • Academic Week 11</p>
+</div>
+<button class="text-primary font-title-md text-title-md flex items-center gap-1 hover:underline" onclick="switchTab('my-classes')" type="button">
+<span>Full Timetable</span>
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+</button>
+</div>
+<!-- Class Cards Stack -->
+<div class="mt-space-lg space-y-space-md">
+<!-- Period 01: Active Session -->
+<div class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-space-md" style="border-left: 4px solid #5B5CE2;">
+<div class="flex items-start gap-space-md">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container-lowest text-primary font-bold shadow-sm">
+<span class="font-label-sm text-tertiary">PER</span>
+<span class="font-headline-sm text-headline-sm">01</span>
+</div>
+<div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-title-md text-title-md text-on-surface">Cyber Security (CSE-A)</span>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+                    Live Now
+                  </span>
+</div>
+<div class="flex items-center gap-space-md text-tertiary font-body-md mt-1 flex-wrap">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 10:00 AM – 11:00 AM</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">pin_drop</span> Room CSE-204</span>
+<span>•</span>
+<span>Dr. R. Kumar</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-tertiary">Currently active • Use Join Session above</span>
+<button class="px-space-md py-2 rounded-xl bg-primary-container text-white font-label-md hover:bg-[#4546b8] transition-colors cursor-pointer" onclick="document.getElementById('btn-join-session').click()" type="button">
+                Enter Class
+              </button>
+</div>
+</div>
+<!-- Period 02: Upcoming Class -->
+<div class="p-space-lg rounded-2xl bg-surface-container-lowest flex flex-col md:flex-row md:items-center justify-between gap-space-md" style="border: 1px solid #E5E7EF;">
+<div class="flex items-start gap-space-md">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container text-on-surface-variant font-bold">
+<span class="font-label-sm text-tertiary">PER</span>
+<span class="font-headline-sm text-headline-sm">02</span>
+</div>
+<div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-title-md text-title-md text-on-surface">Database Management Systems</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-tertiary font-label-sm">Upcoming (Starts in 2h 15m)</span>
+</div>
+<div class="flex items-center gap-space-md text-tertiary font-body-md mt-1 flex-wrap">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 01:30 PM – 02:45 PM</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">pin_drop</span> Lecture Hall 108</span>
+<span>•</span>
+<span>Prof. Ananya Sen</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-[#0E8B70] flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                Auto-tether prepared
+              </span>
+<button class="px-space-md py-2 rounded-xl bg-surface-container text-on-surface font-label-md hover:bg-surface-variant transition-colors cursor-pointer" onclick="switchTab('my-classes')" type="button">
+                Syllabus &amp; Files
+              </button>
+</div>
+</div>
+<!-- Period 03: Lab Session -->
+<div class="p-space-lg rounded-2xl bg-surface-container-lowest flex flex-col md:flex-row md:items-center justify-between gap-space-md" style="border: 1px solid #E5E7EF;">
+<div class="flex items-start gap-space-md">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container text-on-surface-variant font-bold">
+<span class="font-label-sm text-tertiary">PER</span>
+<span class="font-headline-sm text-headline-sm">03</span>
+</div>
+<div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-title-md text-title-md text-on-surface">Distributed Systems Lab</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-tertiary font-label-sm">Practical • 2 Hours</span>
+</div>
+<div class="flex items-center gap-space-md text-tertiary font-body-md mt-1 flex-wrap">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 03:00 PM – 05:00 PM</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">computer</span> Computing Lab 3</span>
+<span>•</span>
+<span>Lab Station Assigned</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-tertiary">Terminal Node #14</span>
+<button class="px-space-md py-2 rounded-xl bg-surface-container text-on-surface font-label-md hover:bg-surface-variant transition-colors cursor-pointer" onclick="switchTab('my-classes')" type="button">
+                Lab Manual
+              </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- TAB VIEW: MY CLASSES (PREVIEW) -->
+<div class="tab-view hidden flex flex-col space-y-space-lg" id="view-my-classes">
+<div class="rounded-[20px] bg-surface-container-lowest p-space-xl shadow-[0_8px_32px_rgba(16,21,43,0.06)]" style="border: 1px solid #E5E7EF;">
+<div class="flex items-center justify-between pb-space-md" style="border-bottom: 1px solid #E5E7EF;">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Enrolled Courses • Spring 2026</h2>
+<p class="font-body-md text-body-md text-tertiary">Department of Computer Science and Engineering</p>
+</div>
+<button class="px-space-md py-2 rounded-xl bg-surface-container text-primary font-label-md" onclick="switchTab('dashboard')" type="button">← Back to Overview</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md mt-space-lg">
+<div class="p-space-lg rounded-2xl bg-surface-container-low" style="border: 1px solid #E5E7EF;">
+<div class="flex justify-between items-start">
+<span class="font-label-sm font-mono text-primary font-bold">CS603</span>
+<span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold">91.6% Attendance</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mt-space-sm">Cyber Security</h3>
+<p class="font-label-sm text-tertiary mt-1">Dr. R. Kumar • 4 Credits</p>
+<div class="mt-space-md pt-space-sm flex justify-between items-center" style="border-top: 1px solid #E5E7EF;">
+<span class="font-label-sm text-on-surface">Next: Today 10:00 AM</span>
+<span class="material-symbols-outlined text-primary text-[18px]">arrow_forward</span>
+</div>
+</div>
+<div class="p-space-lg rounded-2xl bg-surface-container-lowest" style="border: 1px solid #E5E7EF;">
+<div class="flex justify-between items-start">
+<span class="font-label-sm font-mono text-tertiary font-bold">CS601</span>
+<span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold">88.2% Attendance</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mt-space-sm">Database Management Systems</h3>
+<p class="font-label-sm text-tertiary mt-1">Prof. Ananya Sen • 4 Credits</p>
+<div class="mt-space-md pt-space-sm flex justify-between items-center" style="border-top: 1px solid #E5E7EF;">
+<span class="font-label-sm text-on-surface">Next: Today 01:30 PM</span>
+<span class="material-symbols-outlined text-primary text-[18px]">arrow_forward</span>
+</div>
+</div>
+<div class="p-space-lg rounded-2xl bg-surface-container-lowest" style="border: 1px solid #E5E7EF;">
+<div class="flex justify-between items-start">
+<span class="font-label-sm font-mono text-tertiary font-bold">CS605</span>
+<span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold">82.5% Attendance</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mt-space-sm">Distributed Systems Lab</h3>
+<p class="font-label-sm text-tertiary mt-1">Faculty Panel • 2 Credits</p>
+<div class="mt-space-md pt-space-sm flex justify-between items-center" style="border-top: 1px solid #E5E7EF;">
+<span class="font-label-sm text-on-surface">Next: Today 03:00 PM</span>
+<span class="material-symbols-outlined text-primary text-[18px]">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB VIEW: ATTENDANCE LEDGER (PREVIEW) -->
+<div class="tab-view hidden flex flex-col space-y-space-lg" id="view-attendance">
+<div class="rounded-[20px] bg-surface-container-lowest p-space-xl shadow-[0_8px_32px_rgba(16,21,43,0.06)]" style="border: 1px solid #E5E7EF;">
+<div class="flex items-center justify-between pb-space-md" style="border-bottom: 1px solid #E5E7EF;">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Official Attendance Ledger</h2>
+<p class="font-body-md text-body-md text-tertiary">Verified Continuous Classroom Records (Academic Year 2025-26)</p>
+</div>
+<button class="px-space-md py-2 rounded-xl bg-surface-container text-primary font-label-md" onclick="switchTab('dashboard')" type="button">← Back to Overview</button>
+</div>
+<div class="mt-space-lg overflow-x-auto">
+<table class="w-full text-left font-body-md text-body-md">
+<thead>
+<tr class="text-tertiary font-label-sm uppercase bg-surface-container-low" style="border-bottom: 1px solid #E5E7EF;">
+<th class="py-space-sm px-space-md">Date</th>
+<th class="py-space-sm px-space-md">Course</th>
+<th class="py-space-sm px-space-md">Venue</th>
+<th class="py-space-sm px-space-md">Status</th>
+<th class="py-space-sm px-space-md text-right">Verification Mode</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100">
+<tr class="hover:bg-surface">
+<td class="py-space-md px-space-md font-mono text-on-surface">Mar 24, 2026</td>
+<td class="py-space-md px-space-md font-semibold text-on-surface">CS603 • Cyber Security</td>
+<td class="py-space-md px-space-md text-tertiary">Room CSE-204</td>
+<td class="py-space-md px-space-md"><span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold">100% Present</span></td>
+<td class="py-space-md px-space-md text-right text-tertiary font-label-sm">PRESENZA Node #4</td>
+</tr>
+<tr class="hover:bg-surface">
+<td class="py-space-md px-space-md font-mono text-on-surface">Mar 24, 2026</td>
+<td class="py-space-md px-space-md font-semibold text-on-surface">CS601 • Database Mgmt Systems</td>
+<td class="py-space-md px-space-md text-tertiary">Hall 108</td>
+<td class="py-space-md px-space-md"><span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold">100% Present</span></td>
+<td class="py-space-md px-space-md text-right text-tertiary font-label-sm">PRESENZA Node #2</td>
+</tr>
+<tr class="hover:bg-surface">
+<td class="py-space-md px-space-md font-mono text-on-surface">Mar 23, 2026</td>
+<td class="py-space-md px-space-md font-semibold text-on-surface">CS607 • Computer Networks</td>
+<td class="py-space-md px-space-md text-tertiary">Room CSE-201</td>
+<td class="py-space-md px-space-md"><span class="px-2 py-0.5 rounded-full bg-[#22C7A3]/15 text-[#0E8B70] font-label-sm font-semibold">100% Present</span></td>
+<td class="py-space-md px-space-md text-right text-tertiary font-label-sm">PRESENZA Node #1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- TAB VIEW: REPORTS (PREVIEW) -->
+<div class="tab-view hidden flex flex-col space-y-space-lg" id="view-reports">
+<div class="rounded-[20px] bg-surface-container-lowest p-space-xl shadow-[0_8px_32px_rgba(16,21,43,0.06)]" style="border: 1px solid #E5E7EF;">
+<div class="flex items-center justify-between pb-space-md" style="border-bottom: 1px solid #E5E7EF;">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Institutional Presence Reports</h2>
+<p class="font-body-md text-body-md text-tertiary">Semester VI Compliance &amp; Faculty Disciplinary Record</p>
+</div>
+<button class="px-space-md py-2 rounded-xl bg-surface-container text-primary font-label-md" onclick="switchTab('dashboard')" type="button">← Back to Overview</button>
+</div>
+<div class="mt-space-lg p-space-xl rounded-2xl bg-surface-container-low flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-[48px] text-primary">assessment</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-space-sm">Official Record Good Standing</h3>
+<p class="font-body-md text-body-md text-tertiary max-w-md mt-1">You are safely above the University 75.0% threshold across all registered courses. Download your signed Dean's office verification below.</p>
+<button class="mt-space-md px-space-lg py-2.5 rounded-xl bg-primary-container text-white font-title-md hover:bg-[#4546b8] transition-colors cursor-pointer" onclick="alert('Downloading Semester VI Attendance Certificate (PDF)...')" type="button">
+            Download Signed PDF Certificate
+          </button>
+</div>
+</div>
+</div>
+<!-- TAB VIEW: PROFILE (PREVIEW) -->
+<div class="tab-view hidden flex flex-col space-y-space-lg" id="view-profile">
+<div class="rounded-[20px] bg-surface-container-lowest p-space-xl shadow-[0_8px_32px_rgba(16,21,43,0.06)]" style="border: 1px solid #E5E7EF;">
+<div class="flex items-center justify-between pb-space-md" style="border-bottom: 1px solid #E5E7EF;">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Student Profile &amp; Device Identity</h2>
+<p class="font-body-md text-body-md text-tertiary">University Identity Protocol v4.2</p>
+</div>
+<button class="px-space-md py-2 rounded-xl bg-surface-container text-primary font-label-md" onclick="switchTab('dashboard')" type="button">← Back to Overview</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg mt-space-lg">
+<div class="p-space-lg rounded-2xl bg-surface-container-low space-y-space-sm">
+<span class="font-label-sm text-tertiary uppercase font-bold">Academic Record</span>
+<div class="font-headline-sm text-headline-sm text-on-surface">Surya Dhananchezhiyan</div>
+<p class="font-body-md text-tertiary">Roll Number: <span class="font-mono text-on-surface font-semibold">23CS101</span></p>
+<p class="font-body-md text-tertiary">Section: <span class="text-on-surface font-medium">CSE-A (Batch 2023-27)</span></p>
+<p class="font-body-md text-tertiary">Campus Email: <span class="text-on-surface font-mono">surya.d@institution.edu</span></p>
+</div>
+<div class="p-space-lg rounded-2xl bg-surface-container-low space-y-space-sm">
+<span class="font-label-sm text-tertiary uppercase font-bold">Bonded Presence Terminal</span>
+<div class="font-headline-sm text-headline-sm text-on-surface">Apple iPhone 15 Pro</div>
+<p class="font-body-md text-tertiary">Hardware UUID: <span class="font-mono text-on-surface font-semibold">8A4F-992C-E012</span></p>
+<p class="font-body-md text-tertiary">BLE Presence Node: <span class="text-[#0E8B70] font-semibold">Continuous Autonomic</span></p>
+<p class="font-body-md text-tertiary">Status: <span class="text-primary font-semibold">Active &amp; Authorized</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- INTERACTIVE CLIENT SCRIPT: TAB NAVIGATION & SESSION JOIN SIMULATION -->
+<script>
+    function switchTab(targetPath) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+
+      // Target mapping
+      const viewMap = {
+        'dashboard': 'view-dashboard',
+        'home': 'view-dashboard',
+        'my-classes': 'view-my-classes',
+        'attendance': 'view-attendance',
+        'reports': 'view-reports',
+        'profile': 'view-profile'
+      };
+
+      const targetId = viewMap[targetPath] || 'view-dashboard';
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.classList.remove('hidden');
+      }
+
+      // Synchronize Shell Navigation UI
+      document.querySelectorAll('aside nav a[data-path]').forEach(link => {
+        const path = link.getAttribute('data-path');
+        if (path === targetPath || (targetPath === 'dashboard' && path === 'dashboard')) {
+          link.classList.add('bg-surface-container', 'text-primary', 'font-title-md');
+          link.classList.remove('text-on-surface-variant');
+        } else {
+          link.classList.remove('bg-surface-container', 'text-primary', 'font-title-md');
+          link.classList.add('text-on-surface-variant');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Attach listeners to sidebar nav items for instant switching
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('aside nav a[data-path]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const path = link.getAttribute('data-path');
+          switchTab(path);
+        });
+      });
+
+      // Join Session Button Handler
+      const joinBtn = document.getElementById('btn-join-session');
+      if (joinBtn) {
+        joinBtn.addEventListener('click', () => {
+          joinBtn.innerHTML = `
+            <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>Verifying Presence in CSE-204...</span>
+          `;
+          joinBtn.classList.remove('bg-primary-container', 'hover:bg-[#4546b8]');
+          joinBtn.classList.add('bg-[#22C7A3]', 'text-on-secondary');
+
+          setTimeout(() => {
+            joinBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[20px]">check_circle</span>
+              <span>Presence Confirmed • Verified</span>
+            `;
+          }, 1100);
+        });
+      }
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] py-space-md px-gutter mt-auto"><div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-md text-label-md text-on-surface-variant"><p>© 2026 PRESENZA. Continuous Classroom Presence Platform.</p><div class="flex items-center gap-space-md"><a class="hover:text-on-surface transition-colors" data-path="attendance-policy" href="#">Attendance Policy</a><span>•</span><a class="hover:text-on-surface transition-colors" data-path="student-privacy" href="#">Student Privacy</a><span>•</span><a class="hover:text-on-surface transition-colors" data-path="support" href="#">Support Desk</a></div></div></footer></div></body></html>

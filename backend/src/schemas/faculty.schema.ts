@@ -5,12 +5,15 @@ export const facultyCreateSchema = z.object({
   password: z.string().min(8),
   employeeId: z.string().min(1),
   name: z.string().min(1),
-  departmentId: z.string().uuid()
+  departmentId: z.string().uuid(),
+  phone: z.string().min(7).max(32).optional().or(z.literal('')),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional()
 });
 
 export const facultyUpdateSchema = z.object({
   name: z.string().min(1).optional(),
-  departmentId: z.string().uuid().optional()
+  departmentId: z.string().uuid().optional(),
+  phone: z.string().min(7).max(32).optional().or(z.literal(''))
 });
 
 export const facultyStatusSchema = z.object({

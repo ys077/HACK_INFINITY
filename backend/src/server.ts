@@ -21,17 +21,23 @@ import studentSessionRoutes from './routes/student.session.routes.js';
 import facultyRoutes from './routes/faculty.routes.js';
 import facultyClassRoutes from './routes/faculty.class.routes.js';
 import facultySessionRoutes from './routes/faculty.session.routes.js';
+import presenceRoutes from './routes/presence.routes.js';
+import attendanceRoutes from './routes/attendance.routes.js';
+import timelineRoutes from './routes/timeline.routes.js';
+import conflictRoutes from './routes/conflict.routes.js';
+import deviceRoutes from './routes/device.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
+import auditRoutes from './routes/audit.routes.js';
 
 const app = express();
 const server = http.createServer(app);
 
+import { initSocketServer } from './sockets/socket.server.js';
+
 // Initialize Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    methods: ['GET', 'POST']
-  }
-});
+initSocketServer(server);
+
+import { globalLimiter } from './middleware/rate-limit.middleware.js';
 
 // Middleware
 app.use(cors({
@@ -39,9 +45,10 @@ app.use(cors({
   credentials: true
 }));
 app.use(helmet());
+app.use(globalLimiter);
 app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Routes
 app.use('/api/health', healthRoutes);
@@ -57,15 +64,14 @@ app.use('/api/student/sessions', studentSessionRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/faculty/classes', facultyClassRoutes);
 app.use('/api/faculty/sessions', facultySessionRoutes);
+app.use('/api/presence', presenceRoutes);
+app.use('/api', attendanceRoutes);
+app.use('/api', timelineRoutes);
+app.use('/api', conflictRoutes);
+app.use('/api', deviceRoutes);
+app.use('/api', analyticsRoutes);
+app.use('/api', auditRoutes);
 
-// Socket.io connection handling
-io.on('connection', (socket) => {
-  console.log(`Client connected: ${socket.id}`);
-  
-  socket.on('disconnect', () => {
-    console.log(`Client disconnected: ${socket.id}`);
-  });
-});
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

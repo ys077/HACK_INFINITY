@@ -7,6 +7,11 @@ export const classCreateSchema = z.object({
   classroomId: z.string().uuid('Invalid classroom ID')
 });
 
+export const classUpdateSchema = classCreateSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'At least one field is required' }
+);
+
 export const enrollmentCreateSchema = z.object({
   studentId: z.string().uuid('Invalid student ID')
 });

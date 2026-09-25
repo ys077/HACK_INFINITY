@@ -14,7 +14,7 @@ export const getDepartments = async (req: Request, res: Response): Promise<void>
 
 export const getDepartmentById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const department = await prisma.department.findUnique({ where: { id: req.params.id } });
+    const department = await prisma.department.findUnique({ where: { id: (req.params.id as string) } });
     if (!department) { res.status(404).json({ success: false, message: 'Not found' }); return; }
     res.json({ success: true, data: department });
   } catch (error) {
@@ -42,7 +42,7 @@ export const updateDepartment = async (req: Request, res: Response): Promise<voi
     const parse = departmentSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     
-    const dept = await prisma.department.update({ where: { id: req.params.id }, data: parse.data }).catch(() => null);
+    const dept = await prisma.department.update({ where: { id: (req.params.id as string) }, data: parse.data }).catch(() => null);
     if (!dept) { res.status(404).json({ success: false, message: 'Not found' }); return; }
 
     res.json({ success: true, data: dept });
@@ -64,7 +64,7 @@ export const getCourses = async (req: Request, res: Response): Promise<void> => 
 
 export const getCourseById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const course = await prisma.course.findUnique({ where: { id: req.params.id }, include: { department: true } });
+    const course = await prisma.course.findUnique({ where: { id: (req.params.id as string) }, include: { department: true } });
     if (!course) { res.status(404).json({ success: false, message: 'Not found' }); return; }
     res.json({ success: true, data: course });
   } catch (error) {
@@ -95,7 +95,7 @@ export const updateCourse = async (req: Request, res: Response): Promise<void> =
     const parse = courseSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     
-    const course = await prisma.course.update({ where: { id: req.params.id }, data: parse.data }).catch(() => null);
+    const course = await prisma.course.update({ where: { id: (req.params.id as string) }, data: parse.data }).catch(() => null);
     if (!course) { res.status(404).json({ success: false, message: 'Not found' }); return; }
 
     res.json({ success: true, data: course });
@@ -118,7 +118,7 @@ export const getSections = async (req: Request, res: Response): Promise<void> =>
 
 export const getSectionById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const section = await prisma.section.findUnique({ where: { id: req.params.id }, include: { course: true } });
+    const section = await prisma.section.findUnique({ where: { id: (req.params.id as string) }, include: { course: true } });
     if (!section) { res.status(404).json({ success: false, message: 'Not found' }); return; }
     res.json({ success: true, data: section });
   } catch (error) {
@@ -153,7 +153,7 @@ export const updateSection = async (req: Request, res: Response): Promise<void> 
     const parse = sectionSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     
-    const section = await prisma.section.update({ where: { id: req.params.id }, data: parse.data }).catch(() => null);
+    const section = await prisma.section.update({ where: { id: (req.params.id as string) }, data: parse.data }).catch(() => null);
     if (!section) { res.status(404).json({ success: false, message: 'Not found' }); return; }
 
     res.json({ success: true, data: section });
@@ -176,7 +176,7 @@ export const getSubjects = async (req: Request, res: Response): Promise<void> =>
 
 export const getSubjectById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const subject = await prisma.subject.findUnique({ where: { id: req.params.id } });
+    const subject = await prisma.subject.findUnique({ where: { id: (req.params.id as string) } });
     if (!subject) { res.status(404).json({ success: false, message: 'Not found' }); return; }
     res.json({ success: true, data: subject });
   } catch (error) {
@@ -204,7 +204,7 @@ export const updateSubject = async (req: Request, res: Response): Promise<void> 
     const parse = subjectSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     
-    const subject = await prisma.subject.update({ where: { id: req.params.id }, data: parse.data }).catch(() => null);
+    const subject = await prisma.subject.update({ where: { id: (req.params.id as string) }, data: parse.data }).catch(() => null);
     if (!subject) { res.status(404).json({ success: false, message: 'Not found' }); return; }
 
     res.json({ success: true, data: subject });
@@ -226,7 +226,7 @@ export const getClassrooms = async (req: Request, res: Response): Promise<void> 
 
 export const getClassroomById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const classroom = await prisma.classroom.findUnique({ where: { id: req.params.id } });
+    const classroom = await prisma.classroom.findUnique({ where: { id: (req.params.id as string) } });
     if (!classroom) { res.status(404).json({ success: false, message: 'Not found' }); return; }
     res.json({ success: true, data: classroom });
   } catch (error) {
@@ -256,7 +256,7 @@ export const updateClassroom = async (req: Request, res: Response): Promise<void
     const parse = classroomSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     
-    const classroom = await prisma.classroom.update({ where: { id: req.params.id }, data: parse.data }).catch(() => null);
+    const classroom = await prisma.classroom.update({ where: { id: (req.params.id as string) }, data: parse.data }).catch(() => null);
     if (!classroom) { res.status(404).json({ success: false, message: 'Not found' }); return; }
 
     res.json({ success: true, data: classroom });

@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma.js';
 import { facultyCreateSchema, facultyUpdateSchema, facultyStatusSchema, facultyProfileUpdateSchema } from '../schemas/faculty.schema.js';
 import { AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import { hashPassword } from '../utils/password.js';
+import { AuditService } from '../services/audit.service.js';
 
 export const getFaculty = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -60,7 +61,7 @@ export const getFaculty = async (req: Request, res: Response): Promise<void> => 
 export const getFacultyById = async (req: Request, res: Response): Promise<void> => {
   try {
     const faculty = await prisma.faculty.findUnique({
-      where: { id: req.params.id },
+      where: { id: (req.params.id as string) },
       include: {
         user: { select: { id: true, email: true, status: true, role: true } },
         department: true,
@@ -82,7 +83,7 @@ export const getFacultyById = async (req: Request, res: Response): Promise<void>
   }
 };
 
-export const createFaculty = async (req: Request, res: Response): Promise<void> => {
+export const createFaculty = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const parseResult = facultyCreateSchema.safeParse(req.body);
     if (!parseResult.success) {
@@ -90,7 +91,7 @@ export const createFaculty = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const { email, password, employeeId, name, departmentId } = parseResult.data;
+    const { email, password, employeeId, name, departmentId, phone, status } = parseResult.data;
 
     const [existingUser, existingFaculty] = await Promise.all([
       prisma.user.findUnique({ where: { email } }),
@@ -113,13 +114,15 @@ export const createFaculty = async (req: Request, res: Response): Promise<void> 
     }
 
     const passwordHash = await hashPassword(password);
+    const normalizedPhone = phone && phone.trim().length > 0 ? phone.trim() : null;
 
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           email,
           passwordHash,
-          role: 'FACULTY'
+          role: 'FACULTY',
+          status: status ?? 'ACTIVE'
         }
       });
 
@@ -128,14 +131,24 @@ export const createFaculty = async (req: Request, res: Response): Promise<void> 
           userId: user.id,
           employeeId,
           name,
-          departmentId
+          departmentId,
+          phone: normalizedPhone
         },
         include: {
-          user: { select: { id: true, email: true, status: true, role: true } }
+          user: { select: { id: true, email: true, status: true, role: true } },
+          department: true
         }
       });
 
       return faculty;
+    });
+
+    await AuditService.createAuditLog({
+      actorId: req.user!.id,
+      action: 'FACULTY_CREATED',
+      entityType: 'Faculty',
+      entityId: result.id,
+      metadata: { email, employeeId, departmentId, name }
     });
 
     res.status(201).json({ success: true, message: 'Faculty created successfully', data: result });
@@ -153,15 +166,19 @@ export const updateFaculty = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const facultyExists = await prisma.faculty.findUnique({ where: { id: req.params.id } });
+    const facultyExists = await prisma.faculty.findUnique({ where: { id: (req.params.id as string) } });
     if (!facultyExists) {
       res.status(404).json({ success: false, message: 'Faculty not found' });
       return;
     }
 
+    const { phone, ...rest } = parseResult.data;
     const updatedFaculty = await prisma.faculty.update({
-      where: { id: req.params.id },
-      data: parseResult.data,
+      where: { id: (req.params.id as string) },
+      data: {
+        ...rest,
+        ...(phone !== undefined ? { phone: phone && phone.trim().length > 0 ? phone.trim() : null } : {})
+      },
       include: { user: { select: { id: true, email: true, status: true, role: true } } }
     });
 
@@ -180,7 +197,7 @@ export const updateFacultyStatus = async (req: Request, res: Response): Promise<
       return;
     }
 
-    const faculty = await prisma.faculty.findUnique({ where: { id: req.params.id }, include: { user: true } });
+    const faculty = await prisma.faculty.findUnique({ where: { id: (req.params.id as string) }, include: { user: true } });
     if (!faculty) {
       res.status(404).json({ success: false, message: 'Faculty not found' });
       return;
@@ -188,7 +205,7 @@ export const updateFacultyStatus = async (req: Request, res: Response): Promise<
 
     await prisma.user.update({
       where: { id: faculty.userId },
-      data: { status: parseResult.data.status }
+      data: { status: parseResult.data.status as any }
     });
 
     res.json({ success: true, message: 'Faculty status updated successfully' });

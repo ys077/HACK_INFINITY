@@ -28,5 +28,6 @@ export const classroomSchema = z.object({
   building: z.string().min(1, 'Building is required'),
   floor: z.string().min(1, 'Floor is required'),
   roomNumber: z.string().min(1, 'Room number is required'),
-  status: z.enum(['AVAILABLE', 'MAINTENANCE', 'OUT_OF_SERVICE']).optional()
+  status: z.enum(['AVAILABLE', 'MAINTENANCE', 'OUT_OF_SERVICE']).optional(),
+  bleBeaconId: z.string().min(1).max(128).optional().or(z.literal(''))
 });

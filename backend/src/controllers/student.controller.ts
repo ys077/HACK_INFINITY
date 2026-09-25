@@ -62,7 +62,7 @@ export const getStudents = async (req: Request, res: Response): Promise<void> =>
 export const getStudentById = async (req: Request, res: Response): Promise<void> => {
   try {
     const student = await prisma.student.findUnique({
-      where: { id: req.params.id },
+      where: { id: (req.params.id as string) },
       include: {
         user: { select: { id: true, email: true, status: true, role: true } },
         department: true,
@@ -165,14 +165,14 @@ export const updateStudent = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const studentExists = await prisma.student.findUnique({ where: { id: req.params.id } });
+    const studentExists = await prisma.student.findUnique({ where: { id: (req.params.id as string) } });
     if (!studentExists) {
       res.status(404).json({ success: false, message: 'Student not found' });
       return;
     }
 
     const updatedStudent = await prisma.student.update({
-      where: { id: req.params.id },
+      where: { id: (req.params.id as string) },
       data: parseResult.data,
       include: { user: { select: { id: true, email: true, status: true, role: true } } }
     });
@@ -192,7 +192,7 @@ export const updateStudentStatus = async (req: Request, res: Response): Promise<
       return;
     }
 
-    const student = await prisma.student.findUnique({ where: { id: req.params.id }, include: { user: true } });
+    const student = await prisma.student.findUnique({ where: { id: (req.params.id as string) }, include: { user: true } });
     if (!student) {
       res.status(404).json({ success: false, message: 'Student not found' });
       return;
@@ -200,7 +200,7 @@ export const updateStudentStatus = async (req: Request, res: Response): Promise<
 
     await prisma.user.update({
       where: { id: student.userId },
-      data: { status: parseResult.data.status }
+      data: { status: parseResult.data.status as any }
     });
 
     res.json({ success: true, message: 'Student status updated successfully' });

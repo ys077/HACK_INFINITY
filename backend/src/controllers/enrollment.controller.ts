@@ -5,7 +5,7 @@ import { enrollmentCreateSchema, bulkEnrollmentSchema } from '../schemas/class.s
 export const getEnrollments = async (req: Request, res: Response): Promise<void> => {
   try {
     const enrollments = await prisma.enrollment.findMany({
-      where: { classId: req.params.classId },
+      where: { classId: (req.params.classId as string) },
       include: {
         student: { select: { id: true, studentId: true, name: true } }
       }
@@ -18,7 +18,7 @@ export const getEnrollments = async (req: Request, res: Response): Promise<void>
 
 export const createEnrollment = async (req: Request, res: Response): Promise<void> => {
   try {
-    const classId = req.params.classId;
+    const classId = (req.params.classId as string);
     const parse = enrollmentCreateSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     
@@ -47,7 +47,8 @@ export const createEnrollment = async (req: Request, res: Response): Promise<voi
 
 export const deleteEnrollment = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { classId, studentId } = req.params;
+    const classId = req.params.classId as string;
+    const studentId = req.params.studentId as string;
 
     const existing = await prisma.enrollment.findUnique({ where: { studentId_classId: { studentId, classId } } });
     if (!existing) { res.status(404).json({ success: false, message: 'Enrollment not found' }); return; }
@@ -61,7 +62,7 @@ export const deleteEnrollment = async (req: Request, res: Response): Promise<voi
 
 export const bulkEnrollment = async (req: Request, res: Response): Promise<void> => {
   try {
-    const classId = req.params.classId;
+    const classId = (req.params.classId as string);
     const parse = bulkEnrollmentSchema.safeParse(req.body);
     if (!parse.success) { res.status(400).json({ success: false, message: 'Invalid data', errors: parse.error.format() }); return; }
     

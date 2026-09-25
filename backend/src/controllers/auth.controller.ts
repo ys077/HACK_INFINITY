@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { verifyPassword } from '../utils/password.js';
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js';
+import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { AuditService } from '../services/audit.service.js';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -34,12 +35,24 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!user) {
+      await AuditService.createAuditLog({
+        action: 'LOGIN_FAILED',
+        entityType: 'User',
+        entityId: email,
+        metadata: { email, reason: 'Invalid email' }
+      });
       res.status(401).json({ success: false, message: 'Invalid email or password' });
       return;
     }
 
     const isPasswordValid = await verifyPassword(password, user.passwordHash);
     if (!isPasswordValid) {
+      await AuditService.createAuditLog({
+        action: 'LOGIN_FAILED',
+        entityType: 'User',
+        entityId: user.id,
+        metadata: { email, reason: 'Invalid password' }
+      });
       res.status(401).json({ success: false, message: 'Invalid email or password' });
       return;
     }
@@ -52,6 +65,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const payload = { sub: user.id, role: user.role };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
+
+    await AuditService.createAuditLog({
+      actorId: user.id,
+      action: 'LOGIN_SUCCESS',
+      entityType: 'User',
+      entityId: user.id,
+      metadata: { email: user.email, role: user.role }
+    });
 
     res.json({
       success: true,
