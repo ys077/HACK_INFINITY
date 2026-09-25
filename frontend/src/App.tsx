@@ -4,9 +4,13 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 // Layouts
 import StudentLayout from './layouts/StudentLayout';
 import FacultyLayout from './layouts/FacultyLayout';
+import AdminLayout from './layouts/AdminLayout';
 
 // Common
 import Login from './pages/Login';
+
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 // Student Pages
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -35,7 +39,7 @@ import FacultyReports from './pages/faculty/FacultyReports';
 
 import './App.css';
 
-const ProtectedRoute = ({ children, role }: { children: React.ReactNode, role: 'STUDENT' | 'FACULTY' }) => {
+const ProtectedRoute = ({ children, role }: { children: React.ReactNode, role: 'STUDENT' | 'FACULTY' | 'ADMIN' }) => {
   const { isAuthenticated, user } = useAuth();
   
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -54,6 +58,11 @@ function App() {
           
           {/* Default Redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute role="ADMIN"><AdminLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+          </Route>
 
           {/* Student Routes */}
           <Route path="/student" element={<ProtectedRoute role="STUDENT"><StudentLayout /></ProtectedRoute>}>

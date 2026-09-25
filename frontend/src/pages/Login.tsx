@@ -14,7 +14,10 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await api.post('/auth/login', { email, password });
+      const res = await api.post('/auth/login', { 
+        email: email.trim(), 
+        password 
+      });
       const { accessToken, user } = res.data.data;
       login(accessToken, user);
       
@@ -28,7 +31,12 @@ const Login: React.FC = () => {
         navigate('/');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      const data = err.response?.data;
+      if (data?.errors) {
+        setError(JSON.stringify(data.errors));
+      } else {
+        setError(data?.message || err.message || 'Login failed');
+      }
     }
   };
 

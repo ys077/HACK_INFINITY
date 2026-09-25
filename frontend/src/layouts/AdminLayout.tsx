@@ -1,10 +1,9 @@
-
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, LogOut, BarChart3, ShieldCheck, Users, BookOpen, Clock, AlertTriangle, UserCheck, Settings } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users, UserCheck } from 'lucide-react';
 import { cn } from '../utils/cn';
 
-export const AdminLayout = () => {
+const AdminLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,22 +15,8 @@ export const AdminLayout = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { label: 'Users', path: '/admin/users', icon: Users },
     { label: 'Students', path: '/admin/students', icon: Users },
     { label: 'Faculty', path: '/admin/faculty', icon: UserCheck },
-    { label: 'Departments', path: '/admin/departments', icon: BookOpen },
-    { label: 'Courses', path: '/admin/courses', icon: BookOpen },
-    { label: 'Sections', path: '/admin/sections', icon: BookOpen },
-    { label: 'Subjects', path: '/admin/subjects', icon: BookOpen },
-    { label: 'Classrooms', path: '/admin/classrooms', icon: BookOpen },
-    { label: 'Classes', path: '/admin/classes', icon: BookOpen },
-    { label: 'Assignments', path: '/admin/assignments', icon: UserCheck },
-    { label: 'Enrollments', path: '/admin/enrollments', icon: Users },
-    { label: 'Sessions', path: '/admin/sessions', icon: Clock },
-    { label: 'Conflicts', path: '/admin/conflicts', icon: AlertTriangle },
-    { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
-    { label: 'Audit', path: '/admin/audit', icon: ShieldCheck },
-    { label: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 
   return (
@@ -99,3 +84,4 @@ export const AdminLayout = () => {
     </div>
   );
 };
+export default AdminLayout;

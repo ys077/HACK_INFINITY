@@ -9,13 +9,11 @@ export const FacultyLayout: React.FC = () => {
 
   const links = [
     { name: 'Dashboard', to: '/faculty/dashboard', icon: 'grid_view' },
-    { name: 'Start Session', to: '/faculty/session/start', icon: 'play_arrow' },
+    { name: 'Start Session', to: '/faculty/sessions/start', icon: 'play_arrow' },
     { name: 'My Classes', to: '/faculty/classes', icon: 'menu_book' },
-    { name: 'Live Sessions', to: '/faculty/sessions', icon: 'podcasts' },
-    { name: 'History', to: '/faculty/attendance', icon: 'history' },
+    { name: 'History', to: '/faculty/attendance/history', icon: 'history' },
     { name: 'Conflicts', to: '/faculty/conflicts', icon: 'warning' },
     { name: 'Reports', to: '/faculty/reports', icon: 'insert_chart' },
-    { name: 'Profile', to: '/faculty/profile', icon: 'person' },
   ];
 
   const closeSidebar = () => setSidebarOpen(false);

@@ -15,8 +15,8 @@ const StudentLayout = () => {
   const navItems = [
     { name: 'Home', path: '/student/dashboard', icon: 'grid_view' },
     { name: 'My Classes', path: '/student/classes', icon: 'menu_book' },
-    { name: 'Attendance', path: '/student/sessions', icon: 'verified' },
-    { name: 'Reports', path: '/student/attendance', icon: 'insert_chart' },
+    { name: 'Live Sessions', path: '/student/sessions', icon: 'podcasts' },
+    { name: 'History', path: '/student/attendance', icon: 'history' },
     { name: 'Profile', path: '/student/profile', icon: 'person' },
     { name: 'BLE Test (POC)', path: '/student/bluetooth-test', icon: 'bluetooth' },
   ];
