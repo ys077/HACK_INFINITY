@@ -14,10 +14,13 @@ import adminStudentRoutes from './routes/admin.student.routes.js';
 import adminFacultyRoutes from './routes/admin.faculty.routes.js';
 import adminAcademicRoutes from './routes/admin.academic.routes.js';
 import adminClassRoutes from './routes/admin.class.routes.js';
+import adminSessionRoutes from './routes/admin.session.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import studentClassRoutes from './routes/student.class.routes.js';
+import studentSessionRoutes from './routes/student.session.routes.js';
 import facultyRoutes from './routes/faculty.routes.js';
 import facultyClassRoutes from './routes/faculty.class.routes.js';
+import facultySessionRoutes from './routes/faculty.session.routes.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -47,10 +50,13 @@ app.use('/api/admin/students', adminStudentRoutes);
 app.use('/api/admin/faculty', adminFacultyRoutes);
 app.use('/api/admin', adminAcademicRoutes);
 app.use('/api/admin/classes', adminClassRoutes);
+app.use('/api/admin/sessions', adminSessionRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/student/classes', studentClassRoutes);
+app.use('/api/student/sessions', studentSessionRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/faculty/classes', facultyClassRoutes);
+app.use('/api/faculty/sessions', facultySessionRoutes);
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
