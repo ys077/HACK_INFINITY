@@ -1,0 +1,349 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  FACULTY
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  student      Student?
+  faculty      Faculty?
+  admin        Admin?
+  auditLogs    AuditLog[]
+}
+
+model Student {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId    String   @unique
+  name         String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  courseId     String
+  course       Course   @relation(fields: [courseId], references: [id])
+  sectionId    String
+  section      Section  @relation(fields: [sectionId], references: [id])
+  year         Int
+
+  enrollments  Enrollment[]
+  devices      StudentDevice[]
+  presenceEvents PresenceEvent[]
+  attendanceRecords AttendanceRecord[]
+  attendanceConflicts AttendanceConflict[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Faculty {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId   String   @unique
+  name         String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  
+  classes      Class[]
+  attendanceSessions AttendanceSession[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Department {
+  id           String   @id @default(uuid())
+  name         String
+  code         String   @unique
+
+  students     Student[]
+  faculty      Faculty[]
+  courses      Course[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Course {
+  id           String   @id @default(uuid())
+  name         String
+  code         String   @unique
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  students     Student[]
+  sections     Section[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Section {
+  id           String   @id @default(uuid())
+  name         String
+  year         Int
+  courseId     String
+  course       Course   @relation(fields: [courseId], references: [id])
+
+  students     Student[]
+  classes      Class[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([name, courseId, year])
+}
+
+model Subject {
+  id           String   @id @default(uuid())
+  code         String   @unique
+  name         String
+  credits      Int
+
+  classes      Class[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Class {
+  id           String   @id @default(uuid())
+  subjectId    String
+  subject      Subject  @relation(fields: [subjectId], references: [id])
+  sectionId    String
+  section      Section  @relation(fields: [sectionId], references: [id])
+  facultyId    String
+  faculty      Faculty  @relation(fields: [facultyId], references: [id])
+  classroomId  String
+  classroom    Classroom @relation(fields: [classroomId], references: [id])
+
+  enrollments  Enrollment[]
+  attendanceSessions AttendanceSession[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum RoomStatus {
+  AVAILABLE
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+model Classroom {
+  id           String   @id @default(uuid())
+  name         String
+  building     String
+  floor        String
+  roomNumber   String
+  status       RoomStatus @default(AVAILABLE)
+
+  classes      Class[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([building, roomNumber])
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  DROPPED
+  COMPLETED
+}
+
+model Enrollment {
+  id           String   @id @default(uuid())
+  studentId    String
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId      String
+  class        Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  status       EnrollmentStatus @default(ACTIVE)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([studentId, classId])
+}
+
+enum DevicePlatform {
+  ANDROID
+  IOS
+  WEB
+  OTHER
+}
+
+enum DeviceStatus {
+  ACTIVE
+  REVOKED
+}
+
+model StudentDevice {
+  id              String   @id @default(uuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  devicePublicKey String   @unique
+  deviceName      String?
+  platform        DevicePlatform @default(OTHER)
+  status          DeviceStatus @default(ACTIVE)
+  registeredAt    DateTime @default(now())
+  lastSeenAt      DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum SessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  ENDED
+  CANCELLED
+}
+
+model AttendanceSession {
+  id              String   @id @default(uuid())
+  classId         String
+  class           Class    @relation(fields: [classId], references: [id])
+  facultyId       String
+  faculty         Faculty  @relation(fields: [facultyId], references: [id])
+  startedAt       DateTime?
+  expectedEndAt   DateTime
+  endedAt         DateTime?
+  status          SessionStatus @default(SCHEDULED)
+  sessionPublicId String   @unique @default(uuid())
+
+  presenceEvents  PresenceEvent[]
+  attendanceRecords AttendanceRecord[]
+  attendanceConflicts AttendanceConflict[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum EventType {
+  JOINED
+  HEARTBEAT
+  LEFT
+  REJOINED
+  TIMEOUT
+  SESSION_ENDED
+}
+
+model PresenceEvent {
+  id              String   @id @default(uuid())
+  sessionId       String
+  session         AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  eventType       EventType
+  timestamp       DateTime @default(now())
+  deviceId        String?
+  metadata        Json?
+
+  createdAt       DateTime @default(now())
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+  EXCUSED
+}
+
+model AttendanceRecord {
+  id                  String   @id @default(uuid())
+  sessionId           String
+  session             AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId           String
+  student             Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  totalPresentSeconds Int      @default(0)
+  totalAbsentSeconds  Int      @default(0)
+  presencePercentage  Float    @default(0.0)
+  status              AttendanceStatus
+  calculatedAt        DateTime @default(now())
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([sessionId, studentId])
+}
+
+enum ConflictType {
+  MULTIPLE_DEVICES
+  LOCATION_MISMATCH
+  IMPOSSIBLE_TRAVEL
+  UNUSUAL_PATTERN
+}
+
+enum ConflictSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model AttendanceConflict {
+  id              String   @id @default(uuid())
+  sessionId       String
+  session         AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  type            ConflictType
+  severity        ConflictSeverity
+  description     String
+  detectedAt      DateTime @default(now())
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  resolution      String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AuditLog {
+  id              String   @id @default(uuid())
+  actorId         String?
+  actor           User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action          String
+  entityType      String
+  entityId        String
+  timestamp       DateTime @default(now())
+  metadata        Json?
+  previousHash    String?
+  eventHash       String?
+
+  createdAt       DateTime @default(now())
+}
