@@ -11,7 +11,6 @@ const FacultyStartSession = () => {
   const [selectedDept, setSelectedDept] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
-  const [selectedClassroom, setSelectedClassroom] = useState('');
   const [duration, setDuration] = useState('50');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -53,18 +52,10 @@ const FacultyStartSession = () => {
   
   const sections = Array.from(new Set(availableClassesForCourse.map(c => c.section?.name).filter(Boolean)));
 
-  const availableRooms = classes.filter(c => 
-    (!selectedDept || c.section?.course?.department?.name === selectedDept) &&
-    (!selectedCourse || c.section?.course?.name === selectedCourse) &&
-    (!selectedClass || c.section?.name === selectedClass)
-  );
-  const rooms = Array.from(new Set(availableRooms.map(c => c.classroom?.name).filter(Boolean)));
-
   const targetClass = classes.find(c => 
     c.section?.course?.department?.name === selectedDept &&
     c.section?.course?.name === selectedCourse &&
-    c.section?.name === selectedClass &&
-    c.classroom?.name === selectedClassroom
+    c.section?.name === selectedClass
   );
 
   const handleReview = () => {
@@ -125,10 +116,6 @@ const FacultyStartSession = () => {
             </div>
             
 
-            <div>
-              <p className="text-sm text-gray-500 font-medium">Classroom</p>
-              <p className="text-lg font-semibold text-gray-900">{selectedClassroom}</p>
-            </div>
             
             <div>
               <p className="text-sm text-gray-500 font-medium">Faculty</p>
@@ -181,33 +168,59 @@ const FacultyStartSession = () => {
       <p className="text-gray-500">Configure your session context before initiating continuous presence monitoring.</p>
       
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Select Class to Start</label>
-          <select 
-            value={targetClass?.id || ''} 
-            onChange={e => {
-              const cls = classes.find(c => c.id === e.target.value);
-              if (cls) {
-                setSelectedDept(cls.section?.course?.department?.name || '');
-                setSelectedCourse(cls.section?.course?.name || '');
-                setSelectedClass(cls.section?.name || '');
-                setSelectedClassroom(cls.classroom?.name || '');
-              } else {
-                setSelectedDept('');
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+            <select 
+              value={selectedDept} 
+              onChange={e => {
+                setSelectedDept(e.target.value);
                 setSelectedCourse('');
                 setSelectedClass('');
-                setSelectedClassroom('');
-              }
-            }} 
-            className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none"
-          >
-            <option value="">Choose a class...</option>
-            {classes.map((c: any) => (
-              <option key={c.id} value={c.id}>
-                {c.section?.course?.department?.name} - {c.section?.course?.name} (Sec {c.section?.name}) @ {c.classroom?.name}
-              </option>
-            ))}
-          </select>
+              }} 
+              className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none"
+            >
+              <option value="">Select Department...</option>
+              {departments.map((d: any) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Course / Subject</label>
+            <select 
+              value={selectedCourse} 
+              onChange={e => {
+                setSelectedCourse(e.target.value);
+                setSelectedClass('');
+              }} 
+              disabled={!selectedDept}
+              className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none disabled:opacity-50"
+            >
+              <option value="">Select Course...</option>
+              {courses.map((c: any) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+            <select 
+              value={selectedClass} 
+              onChange={e => {
+                setSelectedClass(e.target.value);
+              }} 
+              disabled={!selectedCourse}
+              className="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none disabled:opacity-50"
+            >
+              <option value="">Select Section...</option>
+              {sections.map((s: any) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
         </div>
         
         <div className="pt-4 border-t border-gray-100">

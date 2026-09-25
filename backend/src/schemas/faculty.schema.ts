@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const facultyCreateSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().endsWith('@gmail.com', { message: 'Only @gmail.com addresses are allowed' }),
   password: z.string().min(8),
   employeeId: z.string().min(1),
   name: z.string().min(1),

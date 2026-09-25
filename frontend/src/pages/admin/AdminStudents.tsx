@@ -183,7 +183,7 @@ export const AdminStudents = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input required type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-600" />
+                <input required type="email" pattern=".*@gmail\.com$" title="Only @gmail.com addresses are allowed" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-600" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>

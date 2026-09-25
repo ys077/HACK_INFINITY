@@ -61,14 +61,14 @@ const FacultyClassDetails = () => {
           <BookOpen size={24} className="text-gray-400 mr-4" />
           <div>
             <p className="text-sm text-gray-500">Classroom</p>
-            <p className="font-semibold text-gray-900">{cls.classroom}</p>
+            <p className="font-semibold text-gray-900">{cls.classroom?.name || 'Unassigned'}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center">
           <Clock size={24} className="text-gray-400 mr-4" />
           <div>
             <p className="text-sm text-gray-500">Schedule</p>
-            <p className="font-semibold text-gray-900">{cls.schedule}</p>
+            <p className="font-semibold text-gray-900">{cls.schedule || 'Regular Hours'}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
@@ -94,7 +94,7 @@ const FacultyClassDetails = () => {
             <div className="p-6 space-y-4">
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="font-semibold">{cls.section?.course?.name}</p>
-                <p className="text-sm text-gray-600">({cls.section?.name}) • {cls.classroom}</p>
+                <p className="text-sm text-gray-600">({cls.section?.name}) • {cls.classroom?.name || 'Unassigned'}</p>
               </div>
               
               <div>

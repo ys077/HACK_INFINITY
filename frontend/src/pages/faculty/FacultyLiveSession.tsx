@@ -119,7 +119,7 @@ const FacultyLiveSession = () => {
               )}
             </div>
             <p className="text-gray-500 text-sm">
-              {session.class?.section?.course?.code} ({session.class?.section?.name}) • {session.class?.classroom?.name} • Started {new Date(session.createdAt).toLocaleTimeString()}
+              {session.class?.section?.course?.code} ({session.class?.section?.name}) • {session.class?.classroom?.name || 'No Classroom'} • Started {session.startedAt || session.createdAt ? new Date(session.startedAt || session.createdAt).toLocaleTimeString() : 'Unknown'}
             </p>
           </div>
           
